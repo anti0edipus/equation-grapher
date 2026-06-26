@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equation Grapher</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0f0f1a; color: #e0e0f0; display: flex; height: 100vh; overflow: hidden; }
+
+  /* ── Sidebar ── */
+  #sidebar {
+    width: 300px;
+    min-width: 260px;
+    background: #16162a;
+    border-right: 1px solid #2a2a4a;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #sidebar-header {
+    padding: 16px 16px 0;
+    flex-shrink: 0;
+  }
+
+  #sidebar h1 { font-size: 15px; font-weight: 700; color: #a0a0ff; letter-spacing: 0.05em; margin-bottom: 12px; }
+
+  /* Tab buttons */
+  #tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 7px 6px;
+    border: 1px solid #2a2a4a;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: #0f0f1a;
+    color: #5555aa;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    letter-spacing: 0.04em;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .tab-btn.active {
+    background: #1e1e38;
+    color: #a0a0ff;
+    border-color: #3a3a6a;
+    border-bottom-color: #1e1e38;
+  }
+
+  .tab-divider {
+    height: 1px;
+    background: #3a3a6a;
+    margin: 0 0 0 0;
+    flex-shrink: 0;
+  }
+
+  /* Sidebar scrollable body */
+  #sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tab-panel { display: none; flex-direction: column; gap: 12px; }
+  .tab-panel.active { display: flex; }
+
+  #sidebar h2 { font-size: 11px; font-weight: 600; color: #6060aa; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+
+  .param-group { display: flex; flex-direction: column; gap: 10px; }
+  .param { display: flex; flex-direction: column; gap: 4px; }
+
+  .param label {
+    font-size: 12px;
+    color: #9090cc;
+    display: flex;
+    justify-content: space-between;
+  }
+  .param label span { color: #c0c0ff; font-weight: 600; }
+
+  .param input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #2a2a4a;
+    border-radius: 2px;
+    outline: none;
+  }
+  .param input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #6060ff;
+    cursor: pointer;
+  }
+
+  .divider { height: 1px; background: #2a2a4a; margin: 2px 0; }
+
+  /* Equations panel */
+  #eq-panel-1, #eq-panel-2 {
+    background: #0d0d1f;
+    border: 1px solid #2a2a4a;
+    border-radius: 6px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .eq-row { display: flex; flex-direction: column; gap: 1px; }
+  .eq-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .eq-formula {
+    font-size: 11.5px;
+    color: #b0b0ee;
+    font-family: 'Menlo', 'Courier New', monospace;
+    line-height: 1.5;
+  }
+
+  /* ── Main ── */
+  #main {
+    flex: 1;
+    padding: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #plot { width: 100%; flex: 1; }
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>Equation Grapher</h1>
+    <div id="tabs">
+      <div class="tab-btn active" data-tab="1">Complex Model</div>
+      <div class="tab-btn" data-tab="2">Simple Model</div>
+    </div>
+  </div>
+  <div class="tab-divider"></div>
+
+  <div id="sidebar-body">
+
+    <!-- ══ TAB 1 ══ -->
+    <div class="tab-panel active" id="panel-1">
+      <h2>Primary Inputs</h2>
+      <div class="param-group">
+        <div class="param">
+          <label>ε₀ — initial epsilon <span id="v_e0">1.00</span></label>
+          <input type="range" id="e0" min="0.1" max="5" step="0.05" value="1.0">
+        </div>
+        <div class="param">
+          <label>p₀ — pred. pleasure <span id="v_p0">1.00</span></label>
+          <input type="range" id="p0" min="0.1" max="5" step="0.05" value="1.0">
+        </div>
+        <div class="param">
+          <label>K₀ — strike <span id="v_K0">1.00</span></label>
+          <input type="range" id="K0" min="0.1" max="5" step="0.05" value="1.0">
+        </div>
+        <div class="param">
+          <label>r — risk-free rate <span id="v_r">0.050</span></label>
+          <input type="range" id="r" min="0.001" max="0.5" step="0.001" value="0.05">
+        </div>
+        <div class="param">
+          <label>a — elasticity <span id="v_a">0.50</span></label>
+          <input type="range" id="a" min="0.01" max="2" step="0.01" value="0.5">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h2>Additional Parameters</h2>
+      <div class="param-group">
+        <div class="param">
+          <label>λ — decay rate <span id="v_lam">0.10</span></label>
+          <input type="range" id="lam" min="0.01" max="1" step="0.01" value="0.1">
+        </div>
+        <div class="param">
+          <label>σ — volatility <span id="v_sig">0.20</span></label>
+          <input type="range" id="sig" min="0.01" max="1" step="0.01" value="0.2">
+        </div>
+        <div class="param">
+          <label>μ — drift <span id="v_mu">0.05</span></label>
+          <input type="range" id="mu" min="-0.5" max="0.5" step="0.01" value="0.05">
+        </div>
+        <div class="param">
+          <label>c — constant <span id="v_c">1.00</span></label>
+          <input type="range" id="c" min="0.01" max="5" step="0.05" value="1.0">
+        </div>
+        <div class="param">
+          <label>T — maturity <span id="v_T">10</span></label>
+          <input type="range" id="T" min="1" max="30" step="0.5" value="10">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h2>Equations</h2>
+      <div id="eq-panel-1">
+        <div class="eq-row">
+          <div class="eq-name" style="color:#7070ff">ε(t) — Epsilon</div>
+          <div class="eq-formula">ε(t) = ε₀ · e<sup>−λt</sup></div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff70a0">pₜ — Felt Prediction Pleasure</div>
+          <div class="eq-formula">pₜ = p₀ · exp[(σ²/2 − μ)t]</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffaa40">d₂</div>
+          <div class="eq-formula">d₂ = [ln(K₀ε + c·ε<sup>1−a</sup>)<br>&nbsp;&nbsp;&nbsp;&nbsp;+ (σ²/2 − r)(T−t)]<br>&nbsp;&nbsp;&nbsp;&nbsp;/ (σ√(T−t))</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffdd70">d₁</div>
+          <div class="eq-formula">d₁ = 1 − d₂</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#aaaaff">N(d₁), N(d₂)</div>
+          <div class="eq-formula">N(x) = Φ(x) — standard normal CDF</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#70ffaa">v(ε,t) — Felt Experience</div>
+          <div class="eq-formula">v = (1/ε)·[1−N(d₂)]<br>&nbsp;&nbsp;− [K₀+c/ε<sup>a</sup>]·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff7070">B(ε,t) — Felt Boredom</div>
+          <div class="eq-formula">B = [K₀ + c/ε<sup>a</sup>] · e<sup>−r(T−t)</sup></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 2 ══ -->
+    <div class="tab-panel" id="panel-2">
+      <h2>Parameters</h2>
+      <div class="param-group">
+        <div class="param">
+          <label>p₀ — pred. pleasure <span id="s_v_p0">1.00</span></label>
+          <input type="range" id="s_p0" min="0.1" max="5" step="0.05" value="1.0">
+        </div>
+        <div class="param">
+          <label>k — strike <span id="s_v_k">1.00</span></label>
+          <input type="range" id="s_k" min="0.1" max="5" step="0.05" value="1.0">
+        </div>
+        <div class="param">
+          <label>r — risk-free rate <span id="s_v_r">0.050</span></label>
+          <input type="range" id="s_r" min="0.001" max="0.5" step="0.001" value="0.05">
+        </div>
+        <div class="param">
+          <label>σ — volatility <span id="s_v_sig">0.20</span></label>
+          <input type="range" id="s_sig" min="0.01" max="1" step="0.01" value="0.2">
+        </div>
+        <div class="param">
+          <label>μ — drift <span id="s_v_mu">0.05</span></label>
+          <input type="range" id="s_mu" min="-0.5" max="0.5" step="0.01" value="0.05">
+        </div>
+        <div class="param">
+          <label>T — maturity <span id="s_v_T">10</span></label>
+          <input type="range" id="s_T" min="1" max="30" step="0.5" value="10">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <h2>Equations</h2>
+      <div id="eq-panel-2">
+        <div class="eq-row">
+          <div class="eq-name" style="color:#7070ff">ε(t) — Epsilon</div>
+          <div class="eq-formula">ε(t) = 1 / pₜ</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff70a0">pₜ — Felt Prediction Pleasure</div>
+          <div class="eq-formula">pₜ = p₀ · exp[(σ²/2 − μ)t]</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffaa40">d₂</div>
+          <div class="eq-formula">d₂ = [ln(k / pₜ)<br>&nbsp;&nbsp;&nbsp;&nbsp;+ (σ²/2 − r)(T−t)]<br>&nbsp;&nbsp;&nbsp;&nbsp;/ (σ√(T−t))</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffdd70">d₁</div>
+          <div class="eq-formula">N(d₁) = 1 − N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#aaaaff">N(d₁), N(d₂)</div>
+          <div class="eq-formula">N(x) = Φ(x) — standard normal CDF</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#70ffaa">v(t) — Felt Experience</div>
+          <div class="eq-formula">v = pₜ·[1−N(d₂)]<br>&nbsp;&nbsp;− k·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff7070">b(t) — Felt Boredom</div>
+          <div class="eq-formula">b = k · e<sup>−r(T−t)</sup></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sidebar-body -->
+</div><!-- /sidebar -->
+
+<div id="main">
+  <div id="plot"></div>
+</div>
+
+<script>
+// ── Math ──────────────────────────────────────────────────────────────────────
+function normalCDF(x) {
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x) / Math.sqrt(2);
+  const t = 1/(1+p*x);
+  const y = 1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return 0.5*(1+sign*y);
+}
+
+const N_POINTS = 400;
+
+// ── Complex model (Tab 1) ────────────────────────────────────────────────────
+function getParams1() {
+  return {
+    e0: +document.getElementById('e0').value,
+    p0: +document.getElementById('p0').value,
+    K0: +document.getElementById('K0').value,
+    r:  +document.getElementById('r').value,
+    a:  +document.getElementById('a').value,
+    lam:+document.getElementById('lam').value,
+    sig:+document.getElementById('sig').value,
+    mu: +document.getElementById('mu').value,
+    c:  +document.getElementById('c').value,
+    T:  +document.getElementById('T').value,
+  };
+}
+
+function computeSeries1(p) {
+  const { e0, p0, K0, r, a, lam, sig, mu, c, T } = p;
+  const ts = Array.from({length: N_POINTS}, (_, i) => i * (T * 0.99) / (N_POINTS - 1));
+  const epsilon = ts.map(t => e0 * Math.exp(-lam * t));
+  const pt      = ts.map(t => p0 * Math.exp((sig*sig/2 - mu) * t));
+  const d2_arr=[], d1_arr=[], Nd1_arr=[], Nd2_arr=[], vt_arr=[], bt_arr=[];
+  ts.forEach((t, i) => {
+    const e = epsilon[i];
+    const tau = T - t;
+    if (tau <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,bt_arr].forEach(a=>a.push(NaN)); return; }
+    const inner = K0 * e + c * Math.pow(e, 1 - a);
+    if (inner <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,bt_arr].forEach(a=>a.push(NaN)); return; }
+    const d2 = (Math.log(inner) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
+    const d1 = 1 - d2;
+    const Nd2 = normalCDF(d2), Nd1 = normalCDF(d1);
+    const discount = Math.exp(-r * tau);
+    const strike = K0 + c / Math.pow(e, a);
+    const v = (1/e) * (1 - Nd2) - strike * discount * Nd2;
+    const B = strike * discount;
+    d2_arr.push(d2); d1_arr.push(d1);
+    Nd1_arr.push(Nd1); Nd2_arr.push(Nd2);
+    vt_arr.push(v); bt_arr.push(B);
+  });
+  return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, bt: bt_arr };
+}
+
+// ── Simple model (Tab 2) ─────────────────────────────────────────────────────
+function getParams2() {
+  return {
+    p0: +document.getElementById('s_p0').value,
+    k:  +document.getElementById('s_k').value,
+    r:  +document.getElementById('s_r').value,
+    sig:+document.getElementById('s_sig').value,
+    mu: +document.getElementById('s_mu').value,
+    T:  +document.getElementById('s_T').value,
+  };
+}
+
+function computeSeries2(p) {
+  const { p0, k, r, sig, mu, T } = p;
+  const ts = Array.from({length: N_POINTS}, (_, i) => i * (T * 0.99) / (N_POINTS - 1));
+  const pt      = ts.map(t => p0 * Math.exp((sig*sig/2 - mu) * t));
+  const epsilon = pt.map(pti => 1 / pti);
+  const d2_arr=[], d1_arr=[], Nd1_arr=[], Nd2_arr=[], vt_arr=[], bt_arr=[];
+  ts.forEach((t, i) => {
+    const pti = pt[i];
+    const tau = T - t;
+    if (tau <= 0 || pti <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,bt_arr].forEach(a=>a.push(NaN)); return; }
+    const d2 = (Math.log(k / pti) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
+    const Nd2 = normalCDF(d2);
+    const Nd1 = 1 - Nd2;
+    // d1 = N⁻¹(Nd1) = -d2 since N(d1)=1-N(d2)=N(-d2)
+    const d1 = -d2;
+    const discount = Math.exp(-r * tau);
+    const v = pti * (1 - Nd2) - k * discount * Nd2;
+    const b = k * discount;
+    d2_arr.push(d2); d1_arr.push(d1);
+    Nd1_arr.push(Nd1); Nd2_arr.push(Nd2);
+    vt_arr.push(v); bt_arr.push(b);
+  });
+  return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, bt: bt_arr };
+}
+
+// ── Plot ──────────────────────────────────────────────────────────────────────
+function line(x, y, name, color, dash) {
+  return { x, y, name, type: 'scatter', mode: 'lines',
+    line: { color, width: 2, dash: dash || 'solid' } };
+}
+
+const LAYOUT = {
+  paper_bgcolor: 'rgba(0,0,0,0)',
+  plot_bgcolor: '#0a0a18',
+  font: { color: '#8080bb', size: 11 },
+  margin: { t: 20, b: 50, l: 60, r: 20 },
+  xaxis: {
+    gridcolor: '#1a1a30', zerolinecolor: '#2a2a4a',
+    title: { text: 't', font: { color: '#6060aa' } },
+    tickfont: { color: '#6060aa' },
+  },
+  yaxis: {
+    gridcolor: '#1a1a30', zerolinecolor: '#2a2a4a',
+    tickfont: { color: '#6060aa' },
+  },
+  legend: {
+    bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#2a2a4a', borderwidth: 1,
+    font: { size: 12, color: '#c0c0ff' },
+    x: 1.01, y: 1, xanchor: 'left',
+  },
+  hovermode: 'x unified',
+  hoverlabel: { bgcolor: '#1a1a30', bordercolor: '#4040aa', font: { color: '#e0e0ff' } },
+};
+
+const CONFIG = { displayModeBar: true, displaylogo: false, responsive: true,
+  modeBarButtonsToRemove: ['lasso2d','select2d','autoScale2d'] };
+
+let activeTab = 1;
+let initialized = false;
+
+function buildTraces(tab) {
+  if (tab === 1) {
+    const { ts, epsilon, pt, d1, d2, Nd1, Nd2, vt, bt } = computeSeries1(getParams1());
+    return [
+      line(ts, epsilon, 'ε(t) — Epsilon',          '#7070ff'),
+      line(ts, pt,      'pₜ — Pred. Pleasure',      '#ff70a0'),
+      line(ts, d2,      'd₂',                       '#ffaa40'),
+      line(ts, d1,      'd₁',                       '#ffdd70', 'dash'),
+      line(ts, Nd2,     'N(d₂)',                    '#40ddff'),
+      line(ts, Nd1,     'N(d₁)',                    '#a0eeff', 'dash'),
+      line(ts, vt,      'v(ε,t) — Felt Experience', '#70ffaa'),
+      line(ts, bt,      'B(ε,t) — Felt Boredom',   '#ff7070'),
+    ];
+  } else {
+    const { ts, epsilon, pt, d1, d2, Nd1, Nd2, vt, bt } = computeSeries2(getParams2());
+    return [
+      line(ts, epsilon, 'ε(t) — Epsilon',       '#7070ff'),
+      line(ts, pt,      'pₜ — Pred. Pleasure',   '#ff70a0'),
+      line(ts, d2,      'd₂',                    '#ffaa40'),
+      line(ts, d1,      'd₁',                    '#ffdd70', 'dash'),
+      line(ts, Nd2,     'N(d₂)',                 '#40ddff'),
+      line(ts, Nd1,     'N(d₁)',                 '#a0eeff', 'dash'),
+      line(ts, vt,      'v(t) — Felt Experience','#70ffaa'),
+      line(ts, bt,      'b(t) — Felt Boredom',   '#ff7070'),
+    ];
+  }
+}
+
+function render() {
+  const traces = buildTraces(activeTab);
+  if (!initialized) {
+    Plotly.newPlot('plot', traces, LAYOUT, CONFIG);
+    initialized = true;
+  } else {
+    Plotly.react('plot', traces, LAYOUT, CONFIG);
+  }
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = +btn.dataset.tab;
+    if (tab === activeTab) return;
+    activeTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', +b.dataset.tab === tab));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `panel-${tab}`));
+    render();
+  });
+});
+
+// ── Slider bindings (Tab 1) ───────────────────────────────────────────────────
+[
+  {id:'e0',  lbl:'v_e0'},
+  {id:'p0',  lbl:'v_p0'},
+  {id:'K0',  lbl:'v_K0'},
+  {id:'r',   lbl:'v_r'},
+  {id:'a',   lbl:'v_a'},
+  {id:'lam', lbl:'v_lam'},
+  {id:'sig', lbl:'v_sig'},
+  {id:'mu',  lbl:'v_mu'},
+  {id:'c',   lbl:'v_c'},
+  {id:'T',   lbl:'v_T'},
+].forEach(({id, lbl}) => {
+  const el = document.getElementById(id);
+  const lb = document.getElementById(lbl);
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value), s = parseFloat(el.step);
+    lb.textContent = v.toFixed(s < 0.01 ? 3 : s < 1 ? 2 : 0);
+    if (activeTab === 1) render();
+  });
+});
+
+// ── Slider bindings (Tab 2) ───────────────────────────────────────────────────
+[
+  {id:'s_p0',  lbl:'s_v_p0'},
+  {id:'s_k',   lbl:'s_v_k'},
+  {id:'s_r',   lbl:'s_v_r'},
+  {id:'s_sig', lbl:'s_v_sig'},
+  {id:'s_mu',  lbl:'s_v_mu'},
+  {id:'s_T',   lbl:'s_v_T'},
+].forEach(({id, lbl}) => {
+  const el = document.getElementById(id);
+  const lb = document.getElementById(lbl);
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value), s = parseFloat(el.step);
+    lb.textContent = v.toFixed(s < 0.01 ? 3 : s < 1 ? 2 : 0);
+    if (activeTab === 2) render();
+  });
+});
+
+render();
+new ResizeObserver(() => Plotly.Plots.resize('plot')).observe(document.getElementById('main'));
+</script>
+</body>
+</html>
