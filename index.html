@@ -9,134 +9,79 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: system-ui, sans-serif; background: #0f0f1a; color: #e0e0f0; display: flex; height: 100vh; overflow: hidden; }
 
-  /* ── Sidebar ── */
   #sidebar {
-    width: 300px;
-    min-width: 260px;
-    background: #16162a;
-    border-right: 1px solid #2a2a4a;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    width: 300px; min-width: 260px;
+    background: #16162a; border-right: 1px solid #2a2a4a;
+    display: flex; flex-direction: column; overflow: hidden;
   }
-
-  #sidebar-header {
-    padding: 16px 16px 0;
-    flex-shrink: 0;
-  }
-
+  #sidebar-header { padding: 16px 16px 0; flex-shrink: 0; }
   #sidebar h1 { font-size: 15px; font-weight: 700; color: #a0a0ff; letter-spacing: 0.05em; margin-bottom: 12px; }
 
-  /* Tab buttons */
-  #tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 0;
-  }
-
+  #tabs { display: flex; gap: 4px; margin-bottom: 0; }
   .tab-btn {
-    flex: 1;
-    padding: 7px 6px;
-    border: 1px solid #2a2a4a;
-    border-bottom: none;
+    flex: 1; padding: 7px 6px;
+    border: 1px solid #2a2a4a; border-bottom: none;
     border-radius: 6px 6px 0 0;
-    background: #0f0f1a;
-    color: #5555aa;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    letter-spacing: 0.04em;
-    transition: background 0.15s, color 0.15s;
+    background: #0f0f1a; color: #5555aa;
+    font-size: 11px; font-weight: 600; cursor: pointer; text-align: center;
+    letter-spacing: 0.04em; transition: background 0.15s, color 0.15s;
   }
+  .tab-btn.active { background: #1e1e38; color: #a0a0ff; border-color: #3a3a6a; border-bottom-color: #1e1e38; }
+  .tab-divider { height: 1px; background: #3a3a6a; flex-shrink: 0; }
 
-  .tab-btn.active {
-    background: #1e1e38;
-    color: #a0a0ff;
-    border-color: #3a3a6a;
-    border-bottom-color: #1e1e38;
-  }
-
-  .tab-divider {
-    height: 1px;
-    background: #3a3a6a;
-    margin: 0 0 0 0;
-    flex-shrink: 0;
-  }
-
-  /* Sidebar scrollable body */
   #sidebar-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 14px 16px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex: 1; overflow-y: auto; padding: 14px 16px 20px;
+    display: flex; flex-direction: column; gap: 12px;
   }
-
   .tab-panel { display: none; flex-direction: column; gap: 12px; }
   .tab-panel.active { display: flex; }
 
   #sidebar h2 { font-size: 11px; font-weight: 600; color: #6060aa; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
-
   .param-group { display: flex; flex-direction: column; gap: 10px; }
   .param { display: flex; flex-direction: column; gap: 4px; }
-
-  .param label {
-    font-size: 12px;
-    color: #9090cc;
-    display: flex;
-    justify-content: space-between;
-  }
+  .param label { font-size: 12px; color: #9090cc; display: flex; justify-content: space-between; }
   .param label span { color: #c0c0ff; font-weight: 600; }
-
-  .param input[type=range] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 4px;
-    background: #2a2a4a;
-    border-radius: 2px;
-    outline: none;
-  }
-  .param input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: #6060ff;
-    cursor: pointer;
-  }
-
+  .param input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; background: #2a2a4a; border-radius: 2px; outline: none; }
+  .param input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #6060ff; cursor: pointer; }
   .divider { height: 1px; background: #2a2a4a; margin: 2px 0; }
 
-  /* Equations panel */
-  #eq-panel-1, #eq-panel-2 {
-    background: #0d0d1f;
-    border: 1px solid #2a2a4a;
-    border-radius: 6px;
-    padding: 10px 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  .preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .preset-btn, .preset-btn-b {
+    padding: 6px 4px; background: #1a1a30; border: 1px solid #3a3a6a;
+    border-radius: 5px; color: #8080cc; font-size: 11px; font-weight: 600;
+    cursor: pointer; text-align: center; transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
+  .preset-btn:hover, .preset-btn-b:hover { background: #252545; color: #b0b0ff; }
+  .preset-btn.active, .preset-btn-b.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
+  .preset-meta { font-size: 10px; color: #4a4a7a; margin-top: 3px; }
 
+  .mode-group { display: flex; gap: 4px; }
+  .mode-btn, .mode-btn-b {
+    flex: 1; padding: 6px 4px; background: #1a1a30; border: 1px solid #3a3a6a;
+    border-radius: 5px; color: #6060aa; font-size: 11px; font-weight: 600;
+    cursor: pointer; text-align: center; transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .mode-btn:hover, .mode-btn-b:hover { background: #222240; color: #a0a0dd; }
+  .mode-btn.active, .mode-btn-b.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
+
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; }
+  .toggle-label { font-size: 11.5px; color: #9090cc; line-height: 1.4; }
+  .toggle { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: #2a2a4a; border-radius: 22px; cursor: pointer; transition: background 0.2s; }
+  .toggle-slider:before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: #6060aa; border-radius: 50%; transition: transform 0.2s, background 0.2s; }
+  .toggle input:checked + .toggle-slider { background: #3a3acc; }
+  .toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: #a0a0ff; }
+
+  #eq-panel-1, #eq-panel-2 {
+    background: #0d0d1f; border: 1px solid #2a2a4a; border-radius: 6px;
+    padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
+  }
   .eq-row { display: flex; flex-direction: column; gap: 1px; }
   .eq-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
-  .eq-formula {
-    font-size: 11.5px;
-    color: #b0b0ee;
-    font-family: 'Menlo', 'Courier New', monospace;
-    line-height: 1.5;
-  }
+  .eq-formula { font-size: 11.5px; color: #b0b0ee; font-family: 'Menlo', 'Courier New', monospace; line-height: 1.5; }
 
-  /* ── Main ── */
-  #main {
-    flex: 1;
-    padding: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
+  #main { flex: 1; padding: 8px; overflow: hidden; display: flex; flex-direction: column; }
   #plot { width: 100%; flex: 1; }
 </style>
 </head>
@@ -146,120 +91,61 @@
   <div id="sidebar-header">
     <h1>Equation Grapher</h1>
     <div id="tabs">
-      <div class="tab-btn active" data-tab="1">Complex Model</div>
-      <div class="tab-btn" data-tab="2">Simple Model</div>
+      <div class="tab-btn active" data-tab="1">Simple Model</div>
+      <div class="tab-btn" data-tab="2">Boredom dep. on ε</div>
     </div>
   </div>
   <div class="tab-divider"></div>
 
   <div id="sidebar-body">
 
-    <!-- ══ TAB 1 ══ -->
+    <!-- ══ TAB 1: Simple Model ══ -->
     <div class="tab-panel active" id="panel-1">
-      <h2>Primary Inputs</h2>
-      <div class="param-group">
-        <div class="param">
-          <label>ε₀ — initial epsilon <span id="v_e0">1.00</span></label>
-          <input type="range" id="e0" min="0.1" max="5" step="0.05" value="1.0">
-        </div>
-        <div class="param">
-          <label>p₀ — pred. pleasure <span id="v_p0">1.00</span></label>
-          <input type="range" id="p0" min="0.1" max="5" step="0.05" value="1.0">
-        </div>
-        <div class="param">
-          <label>K₀ — strike <span id="v_K0">1.00</span></label>
-          <input type="range" id="K0" min="0.1" max="5" step="0.05" value="1.0">
-        </div>
-        <div class="param">
-          <label>r — risk-free rate <span id="v_r">0.050</span></label>
-          <input type="range" id="r" min="0.001" max="0.5" step="0.001" value="0.05">
-        </div>
-        <div class="param">
-          <label>a — elasticity <span id="v_a">0.50</span></label>
-          <input type="range" id="a" min="0.01" max="2" step="0.01" value="0.5">
-        </div>
+      <h2>Presets</h2>
+      <div class="preset-grid">
+        <button class="preset-btn" data-preset="1a">Fig 1a</button>
+        <button class="preset-btn" data-preset="1b">Fig 1b</button>
+        <button class="preset-btn" data-preset="1c">Fig 1c</button>
+        <button class="preset-btn" data-preset="2a">Fig 2a</button>
+        <button class="preset-btn" data-preset="2b">Fig 2b</button>
+        <button class="preset-btn" data-preset="2c">Fig 2c</button>
       </div>
-
+      <div class="preset-meta">p₀=1.65, T=1, σ=1, μ=0, sign=− for all presets</div>
+      <div class="preset-meta" style="margin-top:6px; color:#7070aa;">No-Bias Condition (d₂=0 → p₀/k = e^(½−r))</div>
+      <div class="preset-grid" style="grid-template-columns:1fr 1fr;">
+        <button class="preset-btn" data-preset="nb0">No Bias r=0</button>
+        <button class="preset-btn" data-preset="nb1">No Bias r=1</button>
+      </div>
+      <div class="param" style="margin-top:6px;">
+        <label>p₀/k ratio <span id="s-ratio">1.00</span></label>
+        <input type="range" id="s-ratio-slider" min="0.1" max="10" step="0.05" value="1.0">
+      </div>
       <div class="divider"></div>
-      <h2>Additional Parameters</h2>
-      <div class="param-group">
-        <div class="param">
-          <label>λ — decay rate <span id="v_lam">0.10</span></label>
-          <input type="range" id="lam" min="0.01" max="1" step="0.01" value="0.1">
-        </div>
-        <div class="param">
-          <label>σ — volatility <span id="v_sig">0.20</span></label>
-          <input type="range" id="sig" min="0.01" max="1" step="0.01" value="0.2">
-        </div>
-        <div class="param">
-          <label>μ — drift <span id="v_mu">0.05</span></label>
-          <input type="range" id="mu" min="-0.5" max="0.5" step="0.01" value="0.05">
-        </div>
-        <div class="param">
-          <label>c — constant <span id="v_c">1.00</span></label>
-          <input type="range" id="c" min="0.01" max="5" step="0.05" value="1.0">
-        </div>
-        <div class="param">
-          <label>T — maturity <span id="v_T">10</span></label>
-          <input type="range" id="T" min="1" max="30" step="0.5" value="10">
-        </div>
-      </div>
-
-      <div class="divider"></div>
-      <h2>Equations</h2>
-      <div id="eq-panel-1">
-        <div class="eq-row">
-          <div class="eq-name" style="color:#7070ff">ε(t) — Epsilon</div>
-          <div class="eq-formula">ε(t) = ε₀ · e<sup>−λt</sup></div>
-        </div>
-        <div class="divider"></div>
-        <div class="eq-row">
-          <div class="eq-name" style="color:#ff70a0">pₜ — Felt Prediction Pleasure</div>
-          <div class="eq-formula">pₜ = p₀ · exp[(σ²/2 − μ)t]</div>
-        </div>
-        <div class="divider"></div>
-        <div class="eq-row">
-          <div class="eq-name" style="color:#ffaa40">d₂</div>
-          <div class="eq-formula">d₂ = [ln(K₀ε + c·ε<sup>1−a</sup>)<br>&nbsp;&nbsp;&nbsp;&nbsp;+ (σ²/2 − r)(T−t)]<br>&nbsp;&nbsp;&nbsp;&nbsp;/ (σ√(T−t))</div>
-        </div>
-        <div class="divider"></div>
-        <div class="eq-row">
-          <div class="eq-name" style="color:#ffdd70">d₁</div>
-          <div class="eq-formula">d₁ = 1 − d₂</div>
-        </div>
-        <div class="divider"></div>
-        <div class="eq-row">
-          <div class="eq-name" style="color:#aaaaff">N(d₁), N(d₂)</div>
-          <div class="eq-formula">N(x) = Φ(x) — standard normal CDF</div>
-        </div>
-        <div class="divider"></div>
-        <div class="eq-row">
-          <div class="eq-name" style="color:#70ffaa">v(ε,t) — Felt Experience</div>
-          <div class="eq-formula">v = (1/ε)·[1−N(d₂)]<br>&nbsp;&nbsp;− [K₀+c/ε<sup>a</sup>]·e<sup>−r(T−t)</sup>·N(d₂)</div>
-        </div>
-        <div class="divider"></div>
-        <div class="eq-row">
-          <div class="eq-name" style="color:#ff7070">B(ε,t) — Felt Boredom</div>
-          <div class="eq-formula">B = [K₀ + c/ε<sup>a</sup>] · e<sup>−r(T−t)</sup></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ TAB 2 ══ -->
-    <div class="tab-panel" id="panel-2">
       <h2>Parameters</h2>
       <div class="param-group">
         <div class="param">
           <label>p₀ — pred. pleasure <span id="s_v_p0">1.00</span></label>
           <input type="range" id="s_p0" min="0.1" max="5" step="0.05" value="1.0">
         </div>
+        <div style="font-size:11px; color:#6060aa; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.08em;">pₜ mode</div>
+        <div class="mode-group">
+          <button class="mode-btn active" data-mode="plus">Improving</button>
+          <button class="mode-btn" data-mode="minus">Worsening</button>
+          <button class="mode-btn" data-mode="const">Constant</button>
+        </div>
+        <div style="background:#0d0d1f; border:1px solid #2a2a4a; border-radius:5px; padding:8px 10px; font-size:11px; color:#7070aa; line-height:1.7;">
+          <div style="color:#9090cc; font-family:'Menlo',monospace; margin-bottom:5px;">pₜ = p₀ · exp[ s·(σ²/2 − μ)t ]</div>
+          <div><span style="color:#00cc44;">s = +1</span> <em>Improving</em>: pₜ rises → ε falls → mastery.</div>
+          <div><span style="color:#ff6644;">s = −1</span> <em>Worsening</em>: pₜ falls → ε rises → error growing.</div>
+          <div><span style="color:#aaaaee;">s = 0 &nbsp;</span> <em>Constant</em>: pₜ = p₀, skill unchanged.</div>
+        </div>
         <div class="param">
           <label>k — strike <span id="s_v_k">1.00</span></label>
-          <input type="range" id="s_k" min="0.1" max="5" step="0.05" value="1.0">
+          <input type="range" id="s_k" min="0.1" max="20" step="0.05" value="1.0">
         </div>
         <div class="param">
           <label>r — risk-free rate <span id="s_v_r">0.050</span></label>
-          <input type="range" id="s_r" min="0.001" max="0.5" step="0.001" value="0.05">
+          <input type="range" id="s_r" min="0" max="5" step="0.01" value="0.05">
         </div>
         <div class="param">
           <label>σ — volatility <span id="s_v_sig">0.20</span></label>
@@ -274,10 +160,17 @@
           <input type="range" id="s_T" min="1" max="30" step="0.5" value="10">
         </div>
       </div>
-
+      <div class="divider"></div>
+      <div class="toggle-row">
+        <div class="toggle-label">Show v Eq.11 sign fills</div>
+        <label class="toggle">
+          <input type="checkbox" id="v11-fill-toggle">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
       <div class="divider"></div>
       <h2>Equations</h2>
-      <div id="eq-panel-2">
+      <div id="eq-panel-1">
         <div class="eq-row">
           <div class="eq-name" style="color:#7070ff">ε(t) — Epsilon</div>
           <div class="eq-formula">ε(t) = 1 / pₜ</div>
@@ -285,7 +178,7 @@
         <div class="divider"></div>
         <div class="eq-row">
           <div class="eq-name" style="color:#ff70a0">pₜ — Felt Prediction Pleasure</div>
-          <div class="eq-formula">pₜ = p₀ · exp[(σ²/2 − μ)t]</div>
+          <div class="eq-formula" id="pt1-eq">pₜ = p₀ · exp[+(σ²/2 − μ)t]</div>
         </div>
         <div class="divider"></div>
         <div class="eq-row">
@@ -304,13 +197,175 @@
         </div>
         <div class="divider"></div>
         <div class="eq-row">
-          <div class="eq-name" style="color:#70ffaa">v(t) — Felt Experience</div>
+          <div class="eq-name" style="color:#3399ff">v(t) — Felt Experience</div>
           <div class="eq-formula">v = pₜ·[1−N(d₂)]<br>&nbsp;&nbsp;− k·e<sup>−r(T−t)</sup>·N(d₂)</div>
         </div>
         <div class="divider"></div>
         <div class="eq-row">
-          <div class="eq-name" style="color:#ff7070">b(t) — Felt Boredom</div>
+          <div class="eq-name" style="color:#ffd700">v — Felt Experience (simplified)</div>
+          <div class="eq-formula">v = pₜ − k·e<sup>−r(T−t)</sup></div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#00ffaa">p_plot — Prediction (weighted)</div>
+          <div class="eq-formula">p_plot = pₜ · N(d₁)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff6644">b_plot — Boredom (weighted)</div>
+          <div class="eq-formula">b_plot = k·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#cc44ff">v — Experience Eq.11</div>
+          <div class="eq-formula">v = pₜ·N(d₁) − k·e<sup>−r(T−t)</sup>·N(d₂)<br>&nbsp;&nbsp;= p_plot − b_plot</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff2020">b(t) — Felt Boredom</div>
           <div class="eq-formula">b = k · e<sup>−r(T−t)</sup></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 2: Boredom depends on epsilon ══ -->
+    <div class="tab-panel" id="panel-2">
+      <h2>Presets</h2>
+      <div class="preset-grid">
+        <button class="preset-btn-b" data-preset="1a">Fig 1a</button>
+        <button class="preset-btn-b" data-preset="1b">Fig 1b</button>
+        <button class="preset-btn-b" data-preset="1c">Fig 1c</button>
+        <button class="preset-btn-b" data-preset="2a">Fig 2a</button>
+        <button class="preset-btn-b" data-preset="2b">Fig 2b</button>
+        <button class="preset-btn-b" data-preset="2c">Fig 2c</button>
+      </div>
+      <div class="preset-meta">p₀=1.65, K₀=k, c=0, T=1, σ=1, μ=0, sign=−</div>
+      <div class="preset-meta" style="margin-top:6px; color:#7070aa;">No-Bias Condition (d₂=0 → p₀/K₀ = e^(½−r), c=0)</div>
+      <div class="preset-grid" style="grid-template-columns:1fr 1fr;">
+        <button class="preset-btn-b" data-preset="nb0">No Bias r=0</button>
+        <button class="preset-btn-b" data-preset="nb1">No Bias r=1</button>
+      </div>
+      <div class="param" style="margin-top:6px;">
+        <label>p₀/K₀ ratio <span id="b-ratio">1.65</span></label>
+        <input type="range" id="b-ratio-slider" min="0.1" max="10" step="0.05" value="1.65">
+      </div>
+      <div class="divider"></div>
+      <h2>Parameters</h2>
+      <div class="param-group">
+        <div class="param">
+          <label>p₀ — pred. pleasure <span id="b_v_p0">1.65</span></label>
+          <input type="range" id="b_p0" min="0.1" max="5" step="0.05" value="1.65">
+        </div>
+        <div style="font-size:11px; color:#6060aa; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.08em;">pₜ mode</div>
+        <div class="mode-group">
+          <button class="mode-btn-b active" data-mode="plus">Improving</button>
+          <button class="mode-btn-b" data-mode="minus">Worsening</button>
+          <button class="mode-btn-b" data-mode="const">Constant</button>
+        </div>
+        <div style="background:#0d0d1f; border:1px solid #2a2a4a; border-radius:5px; padding:8px 10px; font-size:11px; color:#7070aa; line-height:1.7;">
+          <div style="color:#9090cc; font-family:'Menlo',monospace; margin-bottom:5px;">pₜ = p₀ · exp[ s·(σ²/2 − μ)t ]</div>
+          <div><span style="color:#00cc44;">s = +1</span> <em>Improving</em>: pₜ rises → ε falls → k(ε) rises.</div>
+          <div><span style="color:#ff6644;">s = −1</span> <em>Worsening</em>: pₜ falls → ε rises → k(ε) falls.</div>
+          <div><span style="color:#aaaaee;">s = 0 &nbsp;</span> <em>Constant</em>: pₜ = p₀, k(ε) fixed.</div>
+        </div>
+        <div class="param">
+          <label>K₀ — base boredom threshold <span id="b_v_K0">1.00</span></label>
+          <input type="range" id="b_K0" min="0.1" max="20" step="0.05" value="1.0">
+        </div>
+        <div class="param">
+          <label>c — ε sensitivity <span id="b_v_c">0.50</span></label>
+          <input type="range" id="b_c" min="0" max="5" step="0.05" value="0.5">
+        </div>
+        <div class="param">
+          <label>a — elasticity <span id="b_v_a">0.50</span></label>
+          <input type="range" id="b_a" min="0.01" max="3" step="0.01" value="0.5">
+        </div>
+        <div class="param">
+          <label>r — risk-free rate <span id="b_v_r">0.050</span></label>
+          <input type="range" id="b_r" min="0" max="5" step="0.01" value="0.05">
+        </div>
+        <div class="param">
+          <label>σ — volatility <span id="b_v_sig">1.00</span></label>
+          <input type="range" id="b_sig" min="0.01" max="1" step="0.01" value="1.0">
+        </div>
+        <div class="param">
+          <label>μ — drift <span id="b_v_mu">0.00</span></label>
+          <input type="range" id="b_mu" min="-0.5" max="0.5" step="0.01" value="0.0">
+        </div>
+        <div class="param">
+          <label>T — maturity <span id="b_v_T">1</span></label>
+          <input type="range" id="b_T" min="1" max="30" step="0.5" value="1">
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="toggle-row">
+        <div class="toggle-label">Show v Eq.11 sign fills</div>
+        <label class="toggle">
+          <input type="checkbox" id="v11-fill-toggle-b">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="divider"></div>
+      <h2>Equations</h2>
+      <div id="eq-panel-2">
+        <div class="eq-row">
+          <div class="eq-name" style="color:#aa66ff">k(ε) — Boredom Threshold</div>
+          <div class="eq-formula">k(ε) = K₀ + c / ε<sup>a</sup></div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#7070ff">ε(t) — Epsilon</div>
+          <div class="eq-formula">ε(t) = 1 / pₜ</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff70a0">pₜ — Felt Prediction Pleasure</div>
+          <div class="eq-formula" id="pt2-eq">pₜ = p₀ · exp[+(σ²/2 − μ)t]</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffaa40">d₂</div>
+          <div class="eq-formula">d₂ = [ln(k(ε) / pₜ)<br>&nbsp;&nbsp;&nbsp;&nbsp;+ (σ²/2 − r)(T−t)]<br>&nbsp;&nbsp;&nbsp;&nbsp;/ (σ√(T−t))</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffdd70">d₁</div>
+          <div class="eq-formula">N(d₁) = 1 − N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#aaaaff">N(d₁), N(d₂)</div>
+          <div class="eq-formula">N(x) = Φ(x) — standard normal CDF</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#3399ff">v(t) — Felt Experience</div>
+          <div class="eq-formula">v = pₜ·[1−N(d₂)]<br>&nbsp;&nbsp;− k(ε)·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffd700">v — Felt Experience (simplified)</div>
+          <div class="eq-formula">v = pₜ − k(ε)·e<sup>−r(T−t)</sup></div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#00ffaa">p_plot — Prediction (weighted)</div>
+          <div class="eq-formula">p_plot = pₜ · N(d₁)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff6644">b_plot — Boredom (weighted)</div>
+          <div class="eq-formula">b_plot = k(ε)·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#cc44ff">v — Experience Eq.11</div>
+          <div class="eq-formula">v = pₜ·N(d₁) − k(ε)·e<sup>−r(T−t)</sup>·N(d₂)<br>&nbsp;&nbsp;= p_plot − b_plot</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff2020">b(t) — Felt Boredom</div>
+          <div class="eq-formula">b = k(ε) · e<sup>−r(T−t)</sup></div>
         </div>
       </div>
     </div>
@@ -323,7 +378,6 @@
 </div>
 
 <script>
-// ── Math ──────────────────────────────────────────────────────────────────────
 function normalCDF(x) {
   const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
   const sign = x < 0 ? -1 : 1;
@@ -334,51 +388,11 @@ function normalCDF(x) {
 }
 
 const N_POINTS = 400;
+let pt1Mode = 'plus'; // Simple Model (Tab 1)
+let pt2Mode = 'plus'; // Boredom tab (Tab 2)
 
-// ── Complex model (Tab 1) ────────────────────────────────────────────────────
+// ── Simple model (Tab 1) ─────────────────────────────────────────────────────
 function getParams1() {
-  return {
-    e0: +document.getElementById('e0').value,
-    p0: +document.getElementById('p0').value,
-    K0: +document.getElementById('K0').value,
-    r:  +document.getElementById('r').value,
-    a:  +document.getElementById('a').value,
-    lam:+document.getElementById('lam').value,
-    sig:+document.getElementById('sig').value,
-    mu: +document.getElementById('mu').value,
-    c:  +document.getElementById('c').value,
-    T:  +document.getElementById('T').value,
-  };
-}
-
-function computeSeries1(p) {
-  const { e0, p0, K0, r, a, lam, sig, mu, c, T } = p;
-  const ts = Array.from({length: N_POINTS}, (_, i) => i * (T * 0.99) / (N_POINTS - 1));
-  const epsilon = ts.map(t => e0 * Math.exp(-lam * t));
-  const pt      = ts.map(t => p0 * Math.exp((sig*sig/2 - mu) * t));
-  const d2_arr=[], d1_arr=[], Nd1_arr=[], Nd2_arr=[], vt_arr=[], bt_arr=[];
-  ts.forEach((t, i) => {
-    const e = epsilon[i];
-    const tau = T - t;
-    if (tau <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,bt_arr].forEach(a=>a.push(NaN)); return; }
-    const inner = K0 * e + c * Math.pow(e, 1 - a);
-    if (inner <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,bt_arr].forEach(a=>a.push(NaN)); return; }
-    const d2 = (Math.log(inner) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
-    const d1 = 1 - d2;
-    const Nd2 = normalCDF(d2), Nd1 = normalCDF(d1);
-    const discount = Math.exp(-r * tau);
-    const strike = K0 + c / Math.pow(e, a);
-    const v = (1/e) * (1 - Nd2) - strike * discount * Nd2;
-    const B = strike * discount;
-    d2_arr.push(d2); d1_arr.push(d1);
-    Nd1_arr.push(Nd1); Nd2_arr.push(Nd2);
-    vt_arr.push(v); bt_arr.push(B);
-  });
-  return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, bt: bt_arr };
-}
-
-// ── Simple model (Tab 2) ─────────────────────────────────────────────────────
-function getParams2() {
   return {
     p0: +document.getElementById('s_p0').value,
     k:  +document.getElementById('s_k').value,
@@ -386,105 +400,179 @@ function getParams2() {
     sig:+document.getElementById('s_sig').value,
     mu: +document.getElementById('s_mu').value,
     T:  +document.getElementById('s_T').value,
+    ptSign: pt1Mode === 'plus' ? 1 : pt1Mode === 'minus' ? -1 : 0,
+  };
+}
+
+function computeSeries1(p) {
+  const { p0, k, r, sig, mu, T, ptSign } = p;
+  const ts = Array.from({length: N_POINTS}, (_, i) => i * (T * 0.99) / (N_POINTS - 1));
+  const pt      = ts.map(t => p0 * Math.exp(ptSign * (sig*sig/2 - mu) * t));
+  const epsilon = pt.map(pti => 1 / pti);
+  const d2_arr=[], d1_arr=[], Nd1_arr=[], Nd2_arr=[], vt_arr=[], vs_arr=[], pp_arr=[], bp_arr=[], v11_arr=[], bt_arr=[];
+  ts.forEach((t, i) => {
+    const pti = pt[i], tau = T - t;
+    if (tau <= 0 || pti <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,vs_arr,pp_arr,bp_arr,v11_arr,bt_arr].forEach(a=>a.push(NaN)); return; }
+    const d2 = (Math.log(k / pti) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
+    const Nd2 = normalCDF(d2), Nd1 = 1 - Nd2, d1 = -d2;
+    const discount = Math.exp(-r * tau);
+    const v = pti * (1 - Nd2) - k * discount * Nd2;
+    const b = k * discount, vs = pti - k * discount;
+    const pp = pti * Nd1, bp = k * discount * Nd2, v11 = pp - bp;
+    d2_arr.push(d2); d1_arr.push(d1); Nd1_arr.push(Nd1); Nd2_arr.push(Nd2);
+    vt_arr.push(v); vs_arr.push(vs); pp_arr.push(pp); bp_arr.push(bp); v11_arr.push(v11); bt_arr.push(b);
+  });
+  return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
+}
+
+// ── Boredom model (Tab 2) — k(ε) = K₀ + c/εᵃ ────────────────────────────────
+function getParams2() {
+  return {
+    p0:  +document.getElementById('b_p0').value,
+    K0:  +document.getElementById('b_K0').value,
+    c:   +document.getElementById('b_c').value,
+    a:   +document.getElementById('b_a').value,
+    r:   +document.getElementById('b_r').value,
+    sig: +document.getElementById('b_sig').value,
+    mu:  +document.getElementById('b_mu').value,
+    T:   +document.getElementById('b_T').value,
+    ptSign: pt2Mode === 'plus' ? 1 : pt2Mode === 'minus' ? -1 : 0,
   };
 }
 
 function computeSeries2(p) {
-  const { p0, k, r, sig, mu, T } = p;
+  const { p0, K0, c, a, r, sig, mu, T, ptSign } = p;
   const ts = Array.from({length: N_POINTS}, (_, i) => i * (T * 0.99) / (N_POINTS - 1));
-  const pt      = ts.map(t => p0 * Math.exp((sig*sig/2 - mu) * t));
+  const pt      = ts.map(t => p0 * Math.exp(ptSign * (sig*sig/2 - mu) * t));
   const epsilon = pt.map(pti => 1 / pti);
-  const d2_arr=[], d1_arr=[], Nd1_arr=[], Nd2_arr=[], vt_arr=[], bt_arr=[];
+  const d2_arr=[], d1_arr=[], Nd1_arr=[], Nd2_arr=[], vt_arr=[], vs_arr=[], pp_arr=[], bp_arr=[], v11_arr=[], bt_arr=[];
   ts.forEach((t, i) => {
-    const pti = pt[i];
-    const tau = T - t;
-    if (tau <= 0 || pti <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,bt_arr].forEach(a=>a.push(NaN)); return; }
-    const d2 = (Math.log(k / pti) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
-    const Nd2 = normalCDF(d2);
-    const Nd1 = 1 - Nd2;
-    // d1 = N⁻¹(Nd1) = -d2 since N(d1)=1-N(d2)=N(-d2)
-    const d1 = -d2;
+    const pti = pt[i], ei = epsilon[i], tau = T - t;
+    if (tau <= 0 || pti <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,vs_arr,pp_arr,bp_arr,v11_arr,bt_arr].forEach(x=>x.push(NaN)); return; }
+    const ke = K0 + c / Math.pow(ei, a); // k(ε) = K₀ + c/εᵃ
+    if (ke <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,vs_arr,pp_arr,bp_arr,v11_arr,bt_arr].forEach(x=>x.push(NaN)); return; }
+    const d2 = (Math.log(ke / pti) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
+    const Nd2 = normalCDF(d2), Nd1 = 1 - Nd2, d1 = -d2;
     const discount = Math.exp(-r * tau);
-    const v = pti * (1 - Nd2) - k * discount * Nd2;
-    const b = k * discount;
-    d2_arr.push(d2); d1_arr.push(d1);
-    Nd1_arr.push(Nd1); Nd2_arr.push(Nd2);
-    vt_arr.push(v); bt_arr.push(b);
+    const v = pti * (1 - Nd2) - ke * discount * Nd2;
+    const b = ke * discount, vs = pti - ke * discount;
+    const pp = pti * Nd1, bp = ke * discount * Nd2, v11 = pp - bp;
+    d2_arr.push(d2); d1_arr.push(d1); Nd1_arr.push(Nd1); Nd2_arr.push(Nd2);
+    vt_arr.push(v); vs_arr.push(vs); pp_arr.push(pp); bp_arr.push(bp); v11_arr.push(v11); bt_arr.push(b);
   });
-  return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, bt: bt_arr };
+  return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
 }
 
-// ── Plot ──────────────────────────────────────────────────────────────────────
+// ── Plot helpers ──────────────────────────────────────────────────────────────
 function line(x, y, name, color, dash) {
-  return { x, y, name, type: 'scatter', mode: 'lines',
-    line: { color, width: 2, dash: dash || 'solid' } };
+  return { x, y, name, type: 'scatter', mode: 'lines', line: { color, width: 2, dash: dash || 'solid' } };
+}
+
+const C = {
+  boredom:'#ff2020', experience:'#3399ff', expSimp:'#ffd700', expEq11:'#cc44ff',
+  pleasure:'#00cc44', pPlot:'#00ffaa', bPlot:'#ff6644',
+  Nd1:'#00cc44', Nd2:'#ff2020', epsilon:'#ff9900', d1:'#cc44ff', d2:'#00ccdd',
+};
+
+function buildFillTraces(v11, ts, toggleId) {
+  const v11_pos = v11.map(v => (isFinite(v) && v >= 0) ? v : NaN);
+  const v11_neg = v11.map(v => (isFinite(v) && v <  0) ? v : NaN);
+  const xc = [], yc = [];
+  for (let i = 1; i < ts.length; i++) {
+    if (isFinite(v11[i-1]) && isFinite(v11[i]) && v11[i-1] * v11[i] < 0) {
+      const tc = ts[i-1] + (0 - v11[i-1]) * (ts[i] - ts[i-1]) / (v11[i] - v11[i-1]);
+      xc.push(tc); yc.push(0);
+    }
+  }
+  const show = document.getElementById(toggleId).checked ? true : 'legendonly';
+  return [
+    { x: ts, y: v11_pos, name: 'v Eq.11 > 0', type: 'scatter', mode: 'none',
+      fill: 'tozeroy', fillcolor: 'rgba(0,200,80,0.18)', showlegend: false, hoverinfo: 'skip', visible: show },
+    { x: ts, y: v11_neg, name: 'v Eq.11 < 0', type: 'scatter', mode: 'none',
+      fill: 'tozeroy', fillcolor: 'rgba(255,50,50,0.18)', showlegend: false, hoverinfo: 'skip', visible: show },
+    { x: xc, y: yc, name: 'v Eq.11 = 0', type: 'scatter', mode: 'markers',
+      marker: { size: 10, color: '#ffffff', symbol: 'circle-open', line: { color: C.expEq11, width: 2.5 } },
+      hovertemplate: 't = %{x:.3f}<extra>v Eq.11 = 0</extra>', visible: show },
+  ];
+}
+
+function buildTraces(tab) {
+  const { ts, epsilon, pt, d1, d2, Nd1, Nd2, vt, vs, pp, bp, v11, bt } =
+    tab === 1 ? computeSeries1(getParams1()) : computeSeries2(getParams2());
+  const toggleId = tab === 1 ? 'v11-fill-toggle' : 'v11-fill-toggle-b';
+  return [
+    line(ts, epsilon, 'ε(t) — Epsilon',                      C.epsilon),
+    line(ts, pt,      'pₜ — Felt Prediction',                 C.pleasure),
+    line(ts, d2,      'd₂',                                   C.d2),
+    line(ts, d1,      'd₁',                                   C.d1),
+    line(ts, Nd2,     'N(d₂)',                                C.Nd2,      'dot'),
+    line(ts, Nd1,     'N(d₁)',                                C.Nd1,      'dot'),
+    line(ts, vt,      'v(t) — Felt Experience',               C.experience),
+    line(ts, vs,      'v — Felt Experience (simplified)',      C.expSimp,  'dash'),
+    line(ts, pp,      'p_plot — Prediction (weighted)',        C.pPlot),
+    line(ts, bp,      'b_plot — Boredom (weighted)',           C.bPlot),
+    line(ts, v11,     'v — Experience Eq.11 (p_plot−b_plot)', C.expEq11),
+    line(ts, bt,      'b(t) — Felt Boredom',                 C.boredom),
+    ...buildFillTraces(v11, ts, toggleId),
+  ];
 }
 
 const LAYOUT = {
-  paper_bgcolor: 'rgba(0,0,0,0)',
-  plot_bgcolor: '#0a0a18',
+  paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: '#0a0a18',
   font: { color: '#8080bb', size: 11 },
   margin: { t: 20, b: 50, l: 60, r: 20 },
-  xaxis: {
-    gridcolor: '#1a1a30', zerolinecolor: '#2a2a4a',
-    title: { text: 't', font: { color: '#6060aa' } },
-    tickfont: { color: '#6060aa' },
-  },
-  yaxis: {
-    gridcolor: '#1a1a30', zerolinecolor: '#2a2a4a',
-    tickfont: { color: '#6060aa' },
-  },
-  legend: {
-    bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#2a2a4a', borderwidth: 1,
-    font: { size: 12, color: '#c0c0ff' },
-    x: 1.01, y: 1, xanchor: 'left',
-  },
+  xaxis: { gridcolor: '#1a1a30', zerolinecolor: '#2a2a4a', title: { text: 't', font: { color: '#6060aa' } }, tickfont: { color: '#6060aa' } },
+  yaxis: { gridcolor: '#1a1a30', zerolinecolor: '#2a2a4a', tickfont: { color: '#6060aa' } },
+  legend: { bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#2a2a4a', borderwidth: 1, font: { size: 12, color: '#c0c0ff' }, x: 1.01, y: 1, xanchor: 'left' },
   hovermode: 'x unified',
   hoverlabel: { bgcolor: '#1a1a30', bordercolor: '#4040aa', font: { color: '#e0e0ff' } },
 };
-
-const CONFIG = { displayModeBar: true, displaylogo: false, responsive: true,
-  modeBarButtonsToRemove: ['lasso2d','select2d','autoScale2d'] };
+const CONFIG = { displayModeBar: true, displaylogo: false, responsive: true, modeBarButtonsToRemove: ['lasso2d','select2d','autoScale2d'] };
 
 let activeTab = 1;
 let initialized = false;
-
-function buildTraces(tab) {
-  if (tab === 1) {
-    const { ts, epsilon, pt, d1, d2, Nd1, Nd2, vt, bt } = computeSeries1(getParams1());
-    return [
-      line(ts, epsilon, 'ε(t) — Epsilon',          '#7070ff'),
-      line(ts, pt,      'pₜ — Pred. Pleasure',      '#ff70a0'),
-      line(ts, d2,      'd₂',                       '#ffaa40'),
-      line(ts, d1,      'd₁',                       '#ffdd70', 'dash'),
-      line(ts, Nd2,     'N(d₂)',                    '#40ddff'),
-      line(ts, Nd1,     'N(d₁)',                    '#a0eeff', 'dash'),
-      line(ts, vt,      'v(ε,t) — Felt Experience', '#70ffaa'),
-      line(ts, bt,      'B(ε,t) — Felt Boredom',   '#ff7070'),
-    ];
-  } else {
-    const { ts, epsilon, pt, d1, d2, Nd1, Nd2, vt, bt } = computeSeries2(getParams2());
-    return [
-      line(ts, epsilon, 'ε(t) — Epsilon',       '#7070ff'),
-      line(ts, pt,      'pₜ — Pred. Pleasure',   '#ff70a0'),
-      line(ts, d2,      'd₂',                    '#ffaa40'),
-      line(ts, d1,      'd₁',                    '#ffdd70', 'dash'),
-      line(ts, Nd2,     'N(d₂)',                 '#40ddff'),
-      line(ts, Nd1,     'N(d₁)',                 '#a0eeff', 'dash'),
-      line(ts, vt,      'v(t) — Felt Experience','#70ffaa'),
-      line(ts, bt,      'b(t) — Felt Boredom',   '#ff7070'),
-    ];
-  }
-}
+let plotActiveTab = null;
+let pendingVisibility1 = null;
+let pendingVisibility2 = null;
 
 function render() {
   const traces = buildTraces(activeTab);
+  const plotEl = document.getElementById('plot');
+  const pendingVis = activeTab === 1 ? pendingVisibility1 : pendingVisibility2;
+
+  if (activeTab === 1) {
+    const p = getParams1();
+    const ratio = p.p0 / p.k, rs = ratio.toFixed(3);
+    document.getElementById('s-ratio').textContent = rs;
+    document.getElementById('s-ratio-slider').value = Math.min(10, Math.max(0.1, ratio));
+    LAYOUT.annotations = [{ text: `p₀/k = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 13, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
+  } else {
+    const p = getParams2();
+    const ratio = p.p0 / p.K0, rs = ratio.toFixed(3);
+    document.getElementById('b-ratio').textContent = rs;
+    document.getElementById('b-ratio-slider').value = Math.min(10, Math.max(0.1, ratio));
+    LAYOUT.annotations = [{ text: `p₀/K₀ = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 13, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
+  }
+
   if (!initialized) {
     Plotly.newPlot('plot', traces, LAYOUT, CONFIG);
     initialized = true;
   } else {
+    if (pendingVis !== null) {
+      traces.forEach((t, i) => { if (i < 12 && !pendingVis.has(i)) t.visible = 'legendonly'; });
+      if (activeTab === 1) pendingVisibility1 = null; else pendingVisibility2 = null;
+    } else if (plotEl.data && plotActiveTab === activeTab) {
+      plotEl.data.forEach((existing, i) => {
+        if (i < 12 && i < traces.length && existing.visible === 'legendonly') {
+          traces[i].visible = 'legendonly';
+          traces[i].x = existing.x;
+          traces[i].y = existing.y;
+        }
+      });
+    }
     Plotly.react('plot', traces, LAYOUT, CONFIG);
   }
+  plotActiveTab = activeTab;
 }
 
 // ── Tab switching ─────────────────────────────────────────────────────────────
@@ -499,21 +587,12 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// ── Slider bindings (Tab 1) ───────────────────────────────────────────────────
+// ── Slider bindings (Tab 1 — Simple) ─────────────────────────────────────────
 [
-  {id:'e0',  lbl:'v_e0'},
-  {id:'p0',  lbl:'v_p0'},
-  {id:'K0',  lbl:'v_K0'},
-  {id:'r',   lbl:'v_r'},
-  {id:'a',   lbl:'v_a'},
-  {id:'lam', lbl:'v_lam'},
-  {id:'sig', lbl:'v_sig'},
-  {id:'mu',  lbl:'v_mu'},
-  {id:'c',   lbl:'v_c'},
-  {id:'T',   lbl:'v_T'},
+  {id:'s_p0', lbl:'s_v_p0'}, {id:'s_k', lbl:'s_v_k'}, {id:'s_r', lbl:'s_v_r'},
+  {id:'s_sig', lbl:'s_v_sig'}, {id:'s_mu', lbl:'s_v_mu'}, {id:'s_T', lbl:'s_v_T'},
 ].forEach(({id, lbl}) => {
-  const el = document.getElementById(id);
-  const lb = document.getElementById(lbl);
+  const el = document.getElementById(id), lb = document.getElementById(lbl);
   el.addEventListener('input', () => {
     const v = parseFloat(el.value), s = parseFloat(el.step);
     lb.textContent = v.toFixed(s < 0.01 ? 3 : s < 1 ? 2 : 0);
@@ -521,21 +600,135 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
-// ── Slider bindings (Tab 2) ───────────────────────────────────────────────────
+// ── Slider bindings (Tab 2 — Boredom) ────────────────────────────────────────
 [
-  {id:'s_p0',  lbl:'s_v_p0'},
-  {id:'s_k',   lbl:'s_v_k'},
-  {id:'s_r',   lbl:'s_v_r'},
-  {id:'s_sig', lbl:'s_v_sig'},
-  {id:'s_mu',  lbl:'s_v_mu'},
-  {id:'s_T',   lbl:'s_v_T'},
+  {id:'b_p0', lbl:'b_v_p0'}, {id:'b_K0', lbl:'b_v_K0'}, {id:'b_c', lbl:'b_v_c'},
+  {id:'b_a', lbl:'b_v_a'}, {id:'b_r', lbl:'b_v_r'},
+  {id:'b_sig', lbl:'b_v_sig'}, {id:'b_mu', lbl:'b_v_mu'}, {id:'b_T', lbl:'b_v_T'},
 ].forEach(({id, lbl}) => {
-  const el = document.getElementById(id);
-  const lb = document.getElementById(lbl);
+  const el = document.getElementById(id), lb = document.getElementById(lbl);
   el.addEventListener('input', () => {
     const v = parseFloat(el.value), s = parseFloat(el.step);
     lb.textContent = v.toFixed(s < 0.01 ? 3 : s < 1 ? 2 : 0);
     if (activeTab === 2) render();
+  });
+});
+
+// ── pₜ mode buttons ───────────────────────────────────────────────────────────
+const PT_EQ_TEXT = {
+  'plus':  'pₜ = p₀ · exp[+(σ²/2 − μ)t]',
+  'minus': 'pₜ = p₀ · exp[−(σ²/2 − μ)t]',
+  'const': 'pₜ = p₀  (constant)',
+};
+
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    pt1Mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('pt1-eq').textContent = PT_EQ_TEXT[pt1Mode];
+    if (activeTab === 1) render();
+  });
+});
+
+document.querySelectorAll('.mode-btn-b').forEach(btn => {
+  btn.addEventListener('click', () => {
+    pt2Mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn-b').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('pt2-eq').textContent = PT_EQ_TEXT[pt2Mode];
+    if (activeTab === 2) render();
+  });
+});
+
+// ── v Eq.11 fill toggles ──────────────────────────────────────────────────────
+document.getElementById('v11-fill-toggle').addEventListener('change', () => { if (activeTab === 1) render(); });
+document.getElementById('v11-fill-toggle-b').addEventListener('change', () => { if (activeTab === 2) render(); });
+
+// ── Ratio sliders ─────────────────────────────────────────────────────────────
+document.getElementById('s-ratio-slider').addEventListener('input', function() {
+  const ratio = parseFloat(this.value), k = 1.65 / ratio;
+  document.getElementById('s-ratio').textContent = ratio.toFixed(2);
+  const kEl = document.getElementById('s_k');
+  kEl.value = Math.min(Math.max(k, parseFloat(kEl.min)), parseFloat(kEl.max));
+  document.getElementById('s_v_k').textContent = parseFloat(kEl.value).toFixed(2);
+  if (activeTab === 1) render();
+});
+
+document.getElementById('b-ratio-slider').addEventListener('input', function() {
+  const ratio = parseFloat(this.value), K0 = 1.65 / ratio;
+  document.getElementById('b-ratio').textContent = ratio.toFixed(2);
+  const K0El = document.getElementById('b_K0');
+  K0El.value = Math.min(Math.max(K0, parseFloat(K0El.min)), parseFloat(K0El.max));
+  document.getElementById('b_v_K0').textContent = parseFloat(K0El.value).toFixed(2);
+  if (activeTab === 2) render();
+});
+
+// ── Presets (Tab 1 — Simple) ──────────────────────────────────────────────────
+const PRESETS = {
+  '1a': { p0: 1.65, k: 1,   r: 0 }, '1b': { p0: 1.65, k: 2,   r: 0 }, '1c': { p0: 1.65, k: 0.5, r: 0 },
+  '2a': { p0: 1.65, k: 1,   r: 1 }, '2b': { p0: 1.65, k: 2,   r: 1 }, '2c': { p0: 1.65, k: 0.5, r: 1 },
+  'nb0': { p0: 1.65, k: 1.65 / Math.exp(0.5),  r: 0 },
+  'nb1': { p0: 1.65, k: 1.65 / Math.exp(-0.5), r: 1 },
+};
+const PRESET_SHOW = new Set([4, 5, 8, 9, 10]);
+
+function setSlider(id, val, lblId) {
+  const el = document.getElementById(id);
+  el.value = val;
+  const step = parseFloat(el.step);
+  document.getElementById(lblId).textContent = parseFloat(val).toFixed(step < 0.01 ? 3 : step < 1 ? 2 : 0);
+}
+
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const p = PRESETS[btn.dataset.preset];
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    setSlider('s_p0', p.p0, 's_v_p0'); setSlider('s_k', p.k, 's_v_k'); setSlider('s_r', p.r, 's_v_r');
+    setSlider('s_T', 1, 's_v_T'); setSlider('s_sig', 1, 's_v_sig'); setSlider('s_mu', 0, 's_v_mu');
+    document.getElementById('s-ratio-slider').value = Math.min(10, p.p0 / p.k);
+    document.getElementById('s-ratio').textContent = (p.p0 / p.k).toFixed(2);
+    pt1Mode = 'minus';
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'minus'));
+    document.getElementById('pt1-eq').textContent = PT_EQ_TEXT['minus'];
+    if (activeTab !== 1) {
+      activeTab = 1;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', +b.dataset.tab === 1));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-1'));
+    }
+    pendingVisibility1 = PRESET_SHOW;
+    render();
+  });
+});
+
+// ── Presets (Tab 2 — Boredom) ─────────────────────────────────────────────────
+const PRESETS_B = {
+  '1a': { p0: 1.65, K0: 1,   r: 0 }, '1b': { p0: 1.65, K0: 2,   r: 0 }, '1c': { p0: 1.65, K0: 0.5, r: 0 },
+  '2a': { p0: 1.65, K0: 1,   r: 1 }, '2b': { p0: 1.65, K0: 2,   r: 1 }, '2c': { p0: 1.65, K0: 0.5, r: 1 },
+  'nb0': { p0: 1.65, K0: 1.65 / Math.exp(0.5),  r: 0 },
+  'nb1': { p0: 1.65, K0: 1.65 / Math.exp(-0.5), r: 1 },
+};
+
+document.querySelectorAll('.preset-btn-b').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const p = PRESETS_B[btn.dataset.preset];
+    document.querySelectorAll('.preset-btn-b').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    setSlider('b_p0', p.p0, 'b_v_p0'); setSlider('b_K0', p.K0, 'b_v_K0');
+    setSlider('b_c', 0, 'b_v_c'); // c=0 → k(ε)=K₀ constant, matches Simple preset shape
+    setSlider('b_r', p.r, 'b_v_r'); setSlider('b_T', 1, 'b_v_T');
+    setSlider('b_sig', 1, 'b_v_sig'); setSlider('b_mu', 0, 'b_v_mu');
+    document.getElementById('b-ratio-slider').value = Math.min(10, p.p0 / p.K0);
+    document.getElementById('b-ratio').textContent = (p.p0 / p.K0).toFixed(2);
+    pt2Mode = 'minus';
+    document.querySelectorAll('.mode-btn-b').forEach(b => b.classList.toggle('active', b.dataset.mode === 'minus'));
+    document.getElementById('pt2-eq').textContent = PT_EQ_TEXT['minus'];
+    if (activeTab !== 2) {
+      activeTab = 2;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', +b.dataset.tab === 2));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-2'));
+    }
+    pendingVisibility2 = PRESET_SHOW;
+    render();
   });
 });
 
