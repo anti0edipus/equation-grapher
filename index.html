@@ -19,12 +19,12 @@
 
   #tabs { display: flex; gap: 4px; margin-bottom: 0; }
   .tab-btn {
-    flex: 1; padding: 7px 6px;
+    flex: 1; padding: 7px 4px;
     border: 1px solid #2a2a4a; border-bottom: none;
     border-radius: 6px 6px 0 0;
     background: #0f0f1a; color: #5555aa;
-    font-size: 11px; font-weight: 600; cursor: pointer; text-align: center;
-    letter-spacing: 0.04em; transition: background 0.15s, color 0.15s;
+    font-size: 10px; font-weight: 600; cursor: pointer; text-align: center;
+    letter-spacing: 0.03em; transition: background 0.15s, color 0.15s;
   }
   .tab-btn.active { background: #1e1e38; color: #a0a0ff; border-color: #3a3a6a; border-bottom-color: #1e1e38; }
   .tab-divider { height: 1px; background: #3a3a6a; flex-shrink: 0; }
@@ -46,23 +46,26 @@
   .divider { height: 1px; background: #2a2a4a; margin: 2px 0; }
 
   .preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-  .preset-btn, .preset-btn-b {
+  .preset-btn, .preset-btn-b, .preset-btn-c {
     padding: 6px 4px; background: #1a1a30; border: 1px solid #3a3a6a;
     border-radius: 5px; color: #8080cc; font-size: 11px; font-weight: 600;
     cursor: pointer; text-align: center; transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
-  .preset-btn:hover, .preset-btn-b:hover { background: #252545; color: #b0b0ff; }
-  .preset-btn.active, .preset-btn-b.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
+  .preset-btn:hover, .preset-btn-b:hover, .preset-btn-c:hover { background: #252545; color: #b0b0ff; }
+  .preset-btn.active, .preset-btn-b.active, .preset-btn-c.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
   .preset-meta { font-size: 10px; color: #4a4a7a; margin-top: 3px; }
 
   .mode-group { display: flex; gap: 4px; }
-  .mode-btn, .mode-btn-b, .view-btn, .view-btn-b {
+  .mode-btn, .mode-btn-b, .mode-btn-c,
+  .view-btn, .view-btn-b, .view-btn-c {
     flex: 1; padding: 6px 4px; background: #1a1a30; border: 1px solid #3a3a6a;
     border-radius: 5px; color: #6060aa; font-size: 11px; font-weight: 600;
     cursor: pointer; text-align: center; transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
-  .mode-btn:hover, .mode-btn-b:hover, .view-btn:hover, .view-btn-b:hover { background: #222240; color: #a0a0dd; }
-  .mode-btn.active, .mode-btn-b.active, .view-btn.active, .view-btn-b.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
+  .mode-btn:hover, .mode-btn-b:hover, .mode-btn-c:hover,
+  .view-btn:hover, .view-btn-b:hover, .view-btn-c:hover { background: #222240; color: #a0a0dd; }
+  .mode-btn.active, .mode-btn-b.active, .mode-btn-c.active,
+  .view-btn.active, .view-btn-b.active, .view-btn-c.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
 
   .reseed-btn {
     width: 100%; padding: 7px 8px;
@@ -82,7 +85,7 @@
   .toggle input:checked + .toggle-slider { background: #3a3acc; }
   .toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: #a0a0ff; }
 
-  #eq-panel-1, #eq-panel-2 {
+  #eq-panel-1, #eq-panel-2, #eq-panel-3 {
     background: #0d0d1f; border: 1px solid #2a2a4a; border-radius: 6px;
     padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
   }
@@ -102,6 +105,7 @@
     <div id="tabs">
       <div class="tab-btn active" data-tab="1">Simple Model</div>
       <div class="tab-btn" data-tab="2">Boredom dep. on ε</div>
+      <div class="tab-btn" data-tab="3">Boredom Logistic</div>
     </div>
   </div>
   <div class="tab-divider"></div>
@@ -110,8 +114,6 @@
 
     <!-- ══ TAB 1: Simple Model ══ -->
     <div class="tab-panel active" id="panel-1">
-
-      <!-- View mode toggle -->
       <div style="font-size:11px; color:#6060aa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">View mode</div>
       <div class="mode-group">
         <button class="view-btn active" data-view="det">Deterministic</button>
@@ -121,7 +123,6 @@
         <button id="reseed-1" class="reseed-btn">↻ Reseed (M=50)</button>
       </div>
       <div class="divider"></div>
-
       <h2>Presets</h2>
       <div class="preset-grid">
         <button class="preset-btn" data-preset="1a">Fig 1a</button>
@@ -208,13 +209,8 @@
         </div>
         <div class="divider"></div>
         <div class="eq-row">
-          <div class="eq-name" style="color:#ffdd70">d₁</div>
-          <div class="eq-formula">N(d₁) = 1 − N(d₂)</div>
-        </div>
-        <div class="divider"></div>
-        <div class="eq-row">
           <div class="eq-name" style="color:#aaaaff">N(d₁), N(d₂)</div>
-          <div class="eq-formula">N(x) = Φ(x) — standard normal CDF</div>
+          <div class="eq-formula">N(d₁) = 1 − N(d₂) = Φ(d₁)</div>
         </div>
         <div class="divider"></div>
         <div class="eq-row">
@@ -249,10 +245,8 @@
       </div>
     </div>
 
-    <!-- ══ TAB 2: Boredom depends on epsilon ══ -->
+    <!-- ══ TAB 2: Boredom depends on epsilon (power law) ══ -->
     <div class="tab-panel" id="panel-2">
-
-      <!-- View mode toggle -->
       <div style="font-size:11px; color:#6060aa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">View mode</div>
       <div class="mode-group">
         <button class="view-btn-b active" data-view="det">Deterministic</button>
@@ -262,7 +256,6 @@
         <button id="reseed-2" class="reseed-btn">↻ Reseed (M=50)</button>
       </div>
       <div class="divider"></div>
-
       <h2>Presets</h2>
       <div class="preset-grid">
         <button class="preset-btn-b" data-preset="1a">Fig 1a</button>
@@ -342,8 +335,8 @@
       <h2>Equations</h2>
       <div id="eq-panel-2">
         <div class="eq-row">
-          <div class="eq-name" style="color:#aa66ff">k(ε) — Boredom Threshold</div>
-          <div class="eq-formula">k(ε) = K₀ + c / ε<sup>a</sup></div>
+          <div class="eq-name" style="color:#aa66ff">k(ε) — Boredom Threshold (power law)</div>
+          <div class="eq-formula">k(ε) = K₀ + c / ε<sup>a</sup><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= K₀ + c · pₜ<sup>a</sup></div>
         </div>
         <div class="divider"></div>
         <div class="eq-row">
@@ -362,13 +355,8 @@
         </div>
         <div class="divider"></div>
         <div class="eq-row">
-          <div class="eq-name" style="color:#ffdd70">d₁</div>
-          <div class="eq-formula">N(d₁) = 1 − N(d₂)</div>
-        </div>
-        <div class="divider"></div>
-        <div class="eq-row">
           <div class="eq-name" style="color:#aaaaff">N(d₁), N(d₂)</div>
-          <div class="eq-formula">N(x) = Φ(x) — standard normal CDF</div>
+          <div class="eq-formula">N(d₁) = 1 − N(d₂) = Φ(d₁)</div>
         </div>
         <div class="divider"></div>
         <div class="eq-row">
@@ -393,12 +381,163 @@
         <div class="divider"></div>
         <div class="eq-row">
           <div class="eq-name" style="color:#cc44ff">v — Experience Eq.11</div>
-          <div class="eq-formula">v = pₜ·N(d₁) − k(ε)·e<sup>−r(T−t)</sup>·N(d₂)<br>&nbsp;&nbsp;= p_plot − b_plot</div>
+          <div class="eq-formula">v = pₜ·N(d₁) − k(ε)·e<sup>−r(T−t)</sup>·N(d₂)</div>
         </div>
         <div class="divider"></div>
         <div class="eq-row">
           <div class="eq-name" style="color:#ff2020">b(t) — Felt Boredom</div>
           <div class="eq-formula">b = k(ε) · e<sup>−r(T−t)</sup></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TAB 3: Boredom Logistic ══ -->
+    <div class="tab-panel" id="panel-3">
+      <div style="font-size:11px; color:#6060aa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">View mode</div>
+      <div class="mode-group">
+        <button class="view-btn-c active" data-view="det">Deterministic</button>
+        <button class="view-btn-c" data-view="sto">Stochastic</button>
+      </div>
+      <div id="reseed-row-3" style="display:none; margin-top:2px;">
+        <button id="reseed-3" class="reseed-btn">↻ Reseed (M=50)</button>
+      </div>
+      <div class="divider"></div>
+      <h2>Presets</h2>
+      <div class="preset-grid">
+        <button class="preset-btn-c" data-preset="la">p*=0.8 r=0</button>
+        <button class="preset-btn-c" data-preset="lb">p*=p₀ r=0</button>
+        <button class="preset-btn-c" data-preset="lc">p*=3 r=0</button>
+        <button class="preset-btn-c" data-preset="ld">p*=0.8 r=1</button>
+        <button class="preset-btn-c" data-preset="le">p*=p₀ r=1</button>
+        <button class="preset-btn-c" data-preset="lf">p*=3 r=1</button>
+      </div>
+      <div class="preset-meta">K₀=0.5, K_max=2.5, β=5, p₀=1.65, T=1, σ=1, μ=0, sign=−</div>
+      <div class="preset-meta" style="margin-top:6px; color:#7070aa;">Steepness extremes (p*=p₀=1.65, r=0)</div>
+      <div class="preset-grid" style="grid-template-columns:1fr 1fr;">
+        <button class="preset-btn-c" data-preset="bf">β=1 flat</button>
+        <button class="preset-btn-c" data-preset="bs">β=15 sharp</button>
+      </div>
+      <div class="divider"></div>
+      <h2>Parameters</h2>
+      <div class="param-group">
+        <div class="param">
+          <label>p₀ — pred. pleasure <span id="l_v_p0">1.65</span></label>
+          <input type="range" id="l_p0" min="0.1" max="5" step="0.05" value="1.65">
+        </div>
+        <div style="font-size:11px; color:#6060aa; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.08em;">pₜ mode</div>
+        <div class="mode-group">
+          <button class="mode-btn-c active" data-mode="plus">Improving</button>
+          <button class="mode-btn-c" data-mode="minus">Worsening</button>
+          <button class="mode-btn-c" data-mode="const">Constant</button>
+        </div>
+        <div style="background:#0d0d1f; border:1px solid #2a2a4a; border-radius:5px; padding:8px 10px; font-size:11px; color:#7070aa; line-height:1.7;">
+          <div style="color:#9090cc; font-family:'Menlo',monospace; margin-bottom:5px;">pₜ = p₀ · exp[ s·(σ²/2 − μ)t ]</div>
+          <div><span style="color:#00cc44;">s = +1</span> <em>Improving</em>: k saturates at K_max → no crash.</div>
+          <div><span style="color:#ff6644;">s = −1</span> <em>Worsening</em>: k falls toward K₀ as pleasure drops.</div>
+          <div><span style="color:#aaaaee;">s = 0 &nbsp;</span> <em>Constant</em>: pₜ = p₀, k(pₜ) fixed.</div>
+        </div>
+        <div class="param">
+          <label>K₀ — boredom floor <span id="l_v_K0">0.50</span></label>
+          <input type="range" id="l_K0" min="0" max="2" step="0.05" value="0.5">
+        </div>
+        <div class="param">
+          <label>K_max — boredom ceiling <span id="l_v_Kmax">2.50</span></label>
+          <input type="range" id="l_Kmax" min="0.1" max="5" step="0.05" value="2.5">
+        </div>
+        <div class="param">
+          <label>p* — midpoint (pleasure units) <span id="l_v_pstar">1.65</span></label>
+          <input type="range" id="l_pstar" min="0.1" max="5" step="0.05" value="1.65">
+        </div>
+        <div class="param">
+          <label>β — steepness <span id="l_v_beta">5.0</span></label>
+          <input type="range" id="l_beta" min="0.5" max="20" step="0.5" value="5.0">
+        </div>
+        <div class="param">
+          <label>r — risk-free rate <span id="l_v_r">0.050</span></label>
+          <input type="range" id="l_r" min="0" max="5" step="0.01" value="0.05">
+        </div>
+        <div class="param">
+          <label>σ — volatility <span id="l_v_sig">1.00</span></label>
+          <input type="range" id="l_sig" min="0.01" max="1" step="0.01" value="1.0">
+        </div>
+        <div class="param">
+          <label>μ — drift <span id="l_v_mu">0.00</span></label>
+          <input type="range" id="l_mu" min="-0.5" max="0.5" step="0.01" value="0.0">
+        </div>
+        <div class="param">
+          <label>T — maturity <span id="l_v_T">1</span></label>
+          <input type="range" id="l_T" min="1" max="30" step="0.5" value="1">
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="toggle-row">
+        <div class="toggle-label">Show v Eq.11 sign fills</div>
+        <label class="toggle">
+          <input type="checkbox" id="v11-fill-toggle-c">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="divider"></div>
+      <h2>Equations</h2>
+      <div id="eq-panel-3">
+        <div class="eq-row">
+          <div class="eq-name" style="color:#aa66ff">k(pₜ) — Boredom Threshold (logistic)</div>
+          <div class="eq-formula">k = K₀ + (K_max−K₀)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ (1 + exp[−β(pₜ−p*)])</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffaa40; font-size:9px;">Asymptotics: pₜ→0 ⟹ k→K₀ &nbsp;|&nbsp; pₜ→∞ ⟹ k→K_max</div>
+          <div class="eq-formula" style="font-size:10.5px; color:#7070aa;">At p*: k = (K₀+K_max)/2. &nbsp;β→∞ = hard switch at p*.</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#7070ff">ε(t) — Epsilon</div>
+          <div class="eq-formula">ε(t) = 1 / pₜ</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff70a0">pₜ — Felt Prediction Pleasure</div>
+          <div class="eq-formula" id="pt3-eq">pₜ = p₀ · exp[+(σ²/2 − μ)t]</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffaa40">d₂</div>
+          <div class="eq-formula">d₂ = [ln(k(pₜ) / pₜ)<br>&nbsp;&nbsp;&nbsp;&nbsp;+ (σ²/2 − r)(T−t)]<br>&nbsp;&nbsp;&nbsp;&nbsp;/ (σ√(T−t))</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#aaaaff">N(d₁), N(d₂)</div>
+          <div class="eq-formula">N(d₁) = 1 − N(d₂) = Φ(d₁)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#3399ff">v(t) — Felt Experience</div>
+          <div class="eq-formula">v = pₜ·[1−N(d₂)]<br>&nbsp;&nbsp;− k(pₜ)·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffd700">v — Felt Experience (simplified)</div>
+          <div class="eq-formula">v = pₜ − k(pₜ)·e<sup>−r(T−t)</sup></div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#00ffaa">p_plot — Prediction (weighted)</div>
+          <div class="eq-formula">p_plot = pₜ · N(d₁)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff6644">b_plot — Boredom (weighted)</div>
+          <div class="eq-formula">b_plot = k(pₜ)·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#cc44ff">v — Experience Eq.11</div>
+          <div class="eq-formula">v = pₜ·N(d₁) − k(pₜ)·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff2020">b(t) — Felt Boredom</div>
+          <div class="eq-formula">b = k(pₜ) · e<sup>−r(T−t)</sup></div>
         </div>
       </div>
     </div>
@@ -421,13 +560,20 @@ function normalCDF(x) {
   return 0.5*(1+sign*y);
 }
 
+function logistic(x) {
+  if (x > 50) return 1;
+  if (x < -50) return 0;
+  return 1 / (1 + Math.exp(-x));
+}
+
 const N_POINTS = 400;
 
 // ── State ─────────────────────────────────────────────────────────────────────
-let pt1Mode = 'plus', pt2Mode = 'plus';
-let stochMode1 = 'det', stochMode2 = 'det';
-let seed1 = 42, seed2 = 99;
-let plotIsStoch1 = false, plotIsStoch2 = false;
+let pt1Mode = 'plus', pt2Mode = 'plus', pt3Mode = 'plus';
+let stochMode1 = 'det', stochMode2 = 'det', stochMode3 = 'det';
+let seed1 = 42, seed2 = 99, seed3 = 137;
+let plotIsStoch1 = false, plotIsStoch2 = false, plotIsStoch3 = false;
+let pendingVisibility1 = null, pendingVisibility2 = null, pendingVisibility3 = null;
 
 // ── Seeded PRNG (mulberry32) + Box-Muller ─────────────────────────────────────
 function mulberry32(seed) {
@@ -452,6 +598,20 @@ function genNormals(n, rand) {
     if (i < n) out[i++] = mag * Math.sin(2 * Math.PI * u2);
   }
   return out;
+}
+
+// ── ke factory — returns ke(pti) closure for each tab ─────────────────────────
+function makeKeFunc(tab, params) {
+  if (tab === 1) {
+    const { k } = params;
+    return () => k;
+  } else if (tab === 2) {
+    const { K0, c, a } = params;
+    return (pti) => K0 + c / Math.pow(1 / pti, a); // = K0 + c * pti^a
+  } else {
+    const { K0, Kmax, beta, pstar } = params;
+    return (pti) => K0 + (Kmax - K0) * logistic(beta * (pti - pstar));
+  }
 }
 
 // ── Simple model (Tab 1) ─────────────────────────────────────────────────────
@@ -488,7 +648,7 @@ function computeSeries1(p) {
   return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
 }
 
-// ── Boredom model (Tab 2) ─────────────────────────────────────────────────────
+// ── Boredom model (Tab 2 — power law) ────────────────────────────────────────
 function getParams2() {
   return {
     p0:  +document.getElementById('b_p0').value,
@@ -526,25 +686,58 @@ function computeSeries2(p) {
   return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
 }
 
+// ── Boredom model (Tab 3 — logistic) ─────────────────────────────────────────
+function getParams3() {
+  return {
+    p0:    +document.getElementById('l_p0').value,
+    K0:    +document.getElementById('l_K0').value,
+    Kmax:  +document.getElementById('l_Kmax').value,
+    pstar: +document.getElementById('l_pstar').value,
+    beta:  +document.getElementById('l_beta').value,
+    r:     +document.getElementById('l_r').value,
+    sig:   +document.getElementById('l_sig').value,
+    mu:    +document.getElementById('l_mu').value,
+    T:     +document.getElementById('l_T').value,
+    ptSign: pt3Mode === 'plus' ? 1 : pt3Mode === 'minus' ? -1 : 0,
+  };
+}
+
+function computeSeries3(p) {
+  const { p0, K0, Kmax, pstar, beta, r, sig, mu, T, ptSign } = p;
+  const ts = Array.from({length: N_POINTS}, (_, i) => i * (T * 0.99) / (N_POINTS - 1));
+  const pt      = ts.map(t => p0 * Math.exp(ptSign * (sig*sig/2 - mu) * t));
+  const epsilon = pt.map(pti => 1 / pti);
+  const d2_arr=[], d1_arr=[], Nd1_arr=[], Nd2_arr=[], vt_arr=[], vs_arr=[], pp_arr=[], bp_arr=[], v11_arr=[], bt_arr=[];
+  ts.forEach((t, i) => {
+    const pti = pt[i], tau = T - t;
+    if (tau <= 0 || pti <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,vs_arr,pp_arr,bp_arr,v11_arr,bt_arr].forEach(x=>x.push(NaN)); return; }
+    const ke = K0 + (Kmax - K0) * logistic(beta * (pti - pstar));
+    if (ke <= 1e-10) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,vs_arr,pp_arr,bp_arr,v11_arr,bt_arr].forEach(x=>x.push(NaN)); return; }
+    const d2 = (Math.log(ke / pti) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
+    const Nd2 = normalCDF(d2), Nd1 = 1 - Nd2, d1 = -d2;
+    const discount = Math.exp(-r * tau);
+    const v = pti * (1 - Nd2) - ke * discount * Nd2;
+    const b = ke * discount, vs = pti - ke * discount;
+    const pp = pti * Nd1, bp = ke * discount * Nd2, v11 = pp - bp;
+    d2_arr.push(d2); d1_arr.push(d1); Nd1_arr.push(Nd1); Nd2_arr.push(Nd2);
+    vt_arr.push(v); vs_arr.push(vs); pp_arr.push(pp); bp_arr.push(bp); v11_arr.push(v11); bt_arr.push(b);
+  });
+  return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
+}
+
 // ── Stochastic simulation ─────────────────────────────────────────────────────
 function computeStochastic(tab, params, M, seed) {
   const { p0, r, sig, mu, T, ptSign } = params;
-  const isBoredom = tab === 2;
-  // strike for simple = k; for boredom = K0, c, a
-  const strike0 = isBoredom ? params.K0 : params.k;
-  const c = isBoredom ? params.c : 0;
-  const a = isBoredom ? params.a : 1;
-
+  const keFunc = makeKeFunc(tab, params);
   const N = N_POINTS;
   const ts = Array.from({length: N}, (_, i) => i * T * 0.99 / (N - 1));
   const sqrtDt = Math.sqrt(T * 0.99 / (N - 1));
-  const g = ptSign * (sig * sig / 2 - mu); // log-drift for median path
+  const g = ptSign * (sig * sig / 2 - mu);
 
   function v11at(pti, tau) {
     if (tau <= 1e-10 || !isFinite(pti) || pti <= 0) return NaN;
-    const ei = 1 / pti;
-    const ke = isBoredom ? strike0 + c / Math.pow(ei, a) : strike0;
-    if (ke <= 0) return NaN;
+    const ke = keFunc(pti);
+    if (!isFinite(ke) || ke <= 1e-10) return NaN;
     const d2 = (Math.log(ke / pti) + (sig * sig / 2 - r) * tau) / (sig * Math.sqrt(tau));
     const Nd2 = normalCDF(d2), Nd1 = 1 - Nd2;
     return pti * Nd1 - ke * Math.exp(-r * tau) * Nd2;
@@ -553,7 +746,6 @@ function computeStochastic(tab, params, M, seed) {
   const rand = mulberry32(seed);
   const zs = genNormals(M * (N - 1), rand);
 
-  // Simulate M paths of v11
   const paths = [];
   for (let m = 0; m < M; m++) {
     const path = new Array(N);
@@ -566,14 +758,12 @@ function computeStochastic(tab, params, M, seed) {
     paths.push(path);
   }
 
-  // Empirical mean
   const emp_mean = ts.map((_, i) => {
     let sum = 0, cnt = 0;
     for (const path of paths) { if (isFinite(path[i])) { sum += path[i]; cnt++; } }
     return cnt > 0 ? sum / cnt : NaN;
   });
 
-  // 10th / 90th percentiles
   const p10 = [], p90 = [];
   for (let i = 0; i < N; i++) {
     const vals = paths.map(p => p[i]).filter(isFinite).sort((a, b) => a - b);
@@ -581,10 +771,7 @@ function computeStochastic(tab, params, M, seed) {
     p90.push(vals.length > 0 ? vals[Math.floor(vals.length * 0.9)] : NaN);
   }
 
-  // Median path: v11 along p0*exp(g*t)
   const median_v11 = ts.map((t, i) => v11at(p0 * Math.exp(g * t), T - t));
-
-  // Arithmetic mean path: E[pₜ] = p0*exp((g + σ²/2)*t)
   const arith_g = g + sig * sig / 2;
   const arith_v11 = ts.map((t, i) => v11at(p0 * Math.exp(arith_g * t), T - t));
 
@@ -593,28 +780,24 @@ function computeStochastic(tab, params, M, seed) {
 
 function buildStochasticTraces(tab) {
   const M = 50;
-  const params = tab === 1 ? getParams1() : getParams2();
-  const seed = tab === 1 ? seed1 : seed2;
+  const params = tab === 1 ? getParams1() : tab === 2 ? getParams2() : getParams3();
+  const seed = tab === 1 ? seed1 : tab === 2 ? seed2 : seed3;
   const { ts, paths, emp_mean, p10, p90, median_v11, arith_v11 } =
     computeStochastic(tab, params, M, seed);
 
-  // Bundle all paths into one trace (null gaps between segments)
   const bx = [], by = [];
   paths.forEach(path => { bx.push(...ts, null); by.push(...path, null); });
 
   const ptLabel = params.ptSign > 0 ? 'Improving' : params.ptSign < 0 ? 'Worsening' : 'Constant';
 
   return [
-    // Percentile band: lower then upper (fill tonexty)
     { x: ts, y: p10, type: 'scatter', mode: 'lines', showlegend: false, hoverinfo: 'skip',
       line: { color: 'rgba(204,68,255,0)', width: 0 } },
     { x: ts, y: p90, name: '10–90th pctile band', type: 'scatter', mode: 'lines',
       fill: 'tonexty', fillcolor: 'rgba(204,68,255,0.12)',
       line: { color: 'rgba(204,68,255,0)', width: 0 }, hoverinfo: 'skip' },
-    // All 50 paths (single bundled trace)
     { x: bx, y: by, name: `v Eq.11 paths (M=${M})`, type: 'scatter', mode: 'lines',
       line: { color: 'rgba(204,68,255,0.2)', width: 0.8 }, hoverinfo: 'skip' },
-    // Summary curves
     line(ts, median_v11, `v Eq.11 — median pₜ (${ptLabel})`, '#cc44ff'),
     line(ts, arith_v11,  'v Eq.11 — mean pₜ',               '#3399ff', 'dash'),
     line(ts, emp_mean,   'v Eq.11 — empirical mean',          '#ff6699'),
@@ -655,12 +838,12 @@ function buildFillTraces(v11, ts, toggleId) {
 }
 
 function buildTraces(tab) {
-  const isStochastic = (tab === 1 ? stochMode1 : stochMode2) === 'sto';
+  const isStochastic = (tab === 1 ? stochMode1 : tab === 2 ? stochMode2 : stochMode3) === 'sto';
   if (isStochastic) return buildStochasticTraces(tab);
 
   const { ts, epsilon, pt, d1, d2, Nd1, Nd2, vt, vs, pp, bp, v11, bt } =
-    tab === 1 ? computeSeries1(getParams1()) : computeSeries2(getParams2());
-  const toggleId = tab === 1 ? 'v11-fill-toggle' : 'v11-fill-toggle-b';
+    tab === 1 ? computeSeries1(getParams1()) : tab === 2 ? computeSeries2(getParams2()) : computeSeries3(getParams3());
+  const toggleId = tab === 1 ? 'v11-fill-toggle' : tab === 2 ? 'v11-fill-toggle-b' : 'v11-fill-toggle-c';
   return [
     line(ts, epsilon, 'ε(t) — Epsilon',                      C.epsilon),
     line(ts, pt,      'pₜ — Felt Prediction',                 C.pleasure),
@@ -694,30 +877,32 @@ const CONFIG = { displayModeBar: true, displaylogo: false, responsive: true, mod
 let activeTab = 1;
 let initialized = false;
 let plotActiveTab = null;
-let pendingVisibility1 = null;
-let pendingVisibility2 = null;
 
 // ── Render ────────────────────────────────────────────────────────────────────
 function render() {
   const traces = buildTraces(activeTab);
   const plotEl = document.getElementById('plot');
-  const isStochastic = (activeTab === 1 ? stochMode1 : stochMode2) === 'sto';
-  const prevIsStoch = activeTab === 1 ? plotIsStoch1 : plotIsStoch2;
-  const pendingVis = activeTab === 1 ? pendingVisibility1 : pendingVisibility2;
+  const isStochastic = (activeTab === 1 ? stochMode1 : activeTab === 2 ? stochMode2 : stochMode3) === 'sto';
+  const prevIsStoch  = activeTab === 1 ? plotIsStoch1 : activeTab === 2 ? plotIsStoch2 : plotIsStoch3;
+  const pendingVis   = activeTab === 1 ? pendingVisibility1 : activeTab === 2 ? pendingVisibility2 : pendingVisibility3;
 
-  // Annotation: ratio
   if (activeTab === 1) {
     const p = getParams1();
     const ratio = p.p0 / p.k, rs = ratio.toFixed(3);
     document.getElementById('s-ratio').textContent = rs;
     document.getElementById('s-ratio-slider').value = Math.min(10, Math.max(0.1, ratio));
     LAYOUT.annotations = [{ text: `p₀/k = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 13, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
-  } else {
+  } else if (activeTab === 2) {
     const p = getParams2();
     const ratio = p.p0 / p.K0, rs = ratio.toFixed(3);
     document.getElementById('b-ratio').textContent = rs;
     document.getElementById('b-ratio-slider').value = Math.min(10, Math.max(0.1, ratio));
     LAYOUT.annotations = [{ text: `p₀/K₀ = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 13, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
+  } else {
+    const p = getParams3();
+    const ratio = p.p0 / p.Kmax, rs = ratio.toFixed(3);
+    const kp0 = (p.K0 + (p.Kmax - p.K0) * logistic(p.beta * (p.p0 - p.pstar))).toFixed(3);
+    LAYOUT.annotations = [{ text: `p₀/K_max = ${rs}  |  k(p₀) = ${kp0}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 12, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
   }
 
   if (!initialized) {
@@ -727,7 +912,9 @@ function render() {
     const sameStructure = (plotActiveTab === activeTab) && (isStochastic === prevIsStoch);
     if (!isStochastic && pendingVis !== null) {
       traces.forEach((t, i) => { if (i < 12 && !pendingVis.has(i)) t.visible = 'legendonly'; });
-      if (activeTab === 1) pendingVisibility1 = null; else pendingVisibility2 = null;
+      if (activeTab === 1) pendingVisibility1 = null;
+      else if (activeTab === 2) pendingVisibility2 = null;
+      else pendingVisibility3 = null;
     } else if (!isStochastic && sameStructure && plotEl.data) {
       plotEl.data.forEach((existing, i) => {
         if (i < 12 && i < traces.length && existing.visible === 'legendonly') {
@@ -741,7 +928,9 @@ function render() {
   }
 
   plotActiveTab = activeTab;
-  if (activeTab === 1) plotIsStoch1 = isStochastic; else plotIsStoch2 = isStochastic;
+  if (activeTab === 1) plotIsStoch1 = isStochastic;
+  else if (activeTab === 2) plotIsStoch2 = isStochastic;
+  else plotIsStoch3 = isStochastic;
 }
 
 // ── Tab switching ─────────────────────────────────────────────────────────────
@@ -775,6 +964,15 @@ document.querySelectorAll('.view-btn-b').forEach(btn => {
   });
 });
 
+document.querySelectorAll('.view-btn-c').forEach(btn => {
+  btn.addEventListener('click', () => {
+    stochMode3 = btn.dataset.view;
+    document.querySelectorAll('.view-btn-c').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('reseed-row-3').style.display = stochMode3 === 'sto' ? '' : 'none';
+    if (activeTab === 3) render();
+  });
+});
+
 // ── Reseed buttons ────────────────────────────────────────────────────────────
 document.getElementById('reseed-1').addEventListener('click', () => {
   seed1 = Math.floor(Math.random() * 0x100000000);
@@ -783,6 +981,10 @@ document.getElementById('reseed-1').addEventListener('click', () => {
 document.getElementById('reseed-2').addEventListener('click', () => {
   seed2 = Math.floor(Math.random() * 0x100000000);
   if (activeTab === 2 && stochMode2 === 'sto') render();
+});
+document.getElementById('reseed-3').addEventListener('click', () => {
+  seed3 = Math.floor(Math.random() * 0x100000000);
+  if (activeTab === 3 && stochMode3 === 'sto') render();
 });
 
 // ── Slider bindings (Tab 1 — Simple) ─────────────────────────────────────────
@@ -798,7 +1000,7 @@ document.getElementById('reseed-2').addEventListener('click', () => {
   });
 });
 
-// ── Slider bindings (Tab 2 — Boredom) ────────────────────────────────────────
+// ── Slider bindings (Tab 2 — Boredom power law) ───────────────────────────────
 [
   {id:'b_p0', lbl:'b_v_p0'}, {id:'b_K0', lbl:'b_v_K0'}, {id:'b_c', lbl:'b_v_c'},
   {id:'b_a', lbl:'b_v_a'}, {id:'b_r', lbl:'b_v_r'},
@@ -809,6 +1011,20 @@ document.getElementById('reseed-2').addEventListener('click', () => {
     const v = parseFloat(el.value), s = parseFloat(el.step);
     lb.textContent = v.toFixed(s < 0.01 ? 3 : s < 1 ? 2 : 0);
     if (activeTab === 2) render();
+  });
+});
+
+// ── Slider bindings (Tab 3 — Boredom logistic) ───────────────────────────────
+[
+  {id:'l_p0', lbl:'l_v_p0'}, {id:'l_K0', lbl:'l_v_K0'}, {id:'l_Kmax', lbl:'l_v_Kmax'},
+  {id:'l_pstar', lbl:'l_v_pstar'}, {id:'l_beta', lbl:'l_v_beta'}, {id:'l_r', lbl:'l_v_r'},
+  {id:'l_sig', lbl:'l_v_sig'}, {id:'l_mu', lbl:'l_v_mu'}, {id:'l_T', lbl:'l_v_T'},
+].forEach(({id, lbl}) => {
+  const el = document.getElementById(id), lb = document.getElementById(lbl);
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value), s = parseFloat(el.step);
+    lb.textContent = v.toFixed(s < 0.01 ? 3 : s < 1 ? 2 : 0);
+    if (activeTab === 3) render();
   });
 });
 
@@ -837,9 +1053,19 @@ document.querySelectorAll('.mode-btn-b').forEach(btn => {
   });
 });
 
+document.querySelectorAll('.mode-btn-c').forEach(btn => {
+  btn.addEventListener('click', () => {
+    pt3Mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn-c').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('pt3-eq').textContent = PT_EQ_TEXT[pt3Mode];
+    if (activeTab === 3) render();
+  });
+});
+
 // ── v Eq.11 fill toggles ──────────────────────────────────────────────────────
 document.getElementById('v11-fill-toggle').addEventListener('change', () => { if (activeTab === 1) render(); });
 document.getElementById('v11-fill-toggle-b').addEventListener('change', () => { if (activeTab === 2) render(); });
+document.getElementById('v11-fill-toggle-c').addEventListener('change', () => { if (activeTab === 3) render(); });
 
 // ── Ratio sliders ─────────────────────────────────────────────────────────────
 document.getElementById('s-ratio-slider').addEventListener('input', function() {
@@ -898,7 +1124,7 @@ document.querySelectorAll('.preset-btn').forEach(btn => {
   });
 });
 
-// ── Presets (Tab 2 — Boredom) ─────────────────────────────────────────────────
+// ── Presets (Tab 2 — Boredom power law) ──────────────────────────────────────
 const PRESETS_B = {
   '1a': { p0: 1.65, K0: 1,   r: 0 }, '1b': { p0: 1.65, K0: 2,   r: 0 }, '1c': { p0: 1.65, K0: 0.5, r: 0 },
   '2a': { p0: 1.65, K0: 1,   r: 1 }, '2b': { p0: 1.65, K0: 2,   r: 1 }, '2c': { p0: 1.65, K0: 0.5, r: 1 },
@@ -926,6 +1152,45 @@ document.querySelectorAll('.preset-btn-b').forEach(btn => {
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-2'));
     }
     pendingVisibility2 = PRESET_SHOW;
+    render();
+  });
+});
+
+// ── Presets (Tab 3 — Boredom logistic) ───────────────────────────────────────
+const PRESETS_L = {
+  'la': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 0.8,  r: 0 },
+  'lb': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 1.65, r: 0 },
+  'lc': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 3.0,  r: 0 },
+  'ld': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 0.8,  r: 1 },
+  'le': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 1.65, r: 1 },
+  'lf': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 3.0,  r: 1 },
+  'bf': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 1,  pstar: 1.65, r: 0 },
+  'bs': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 15, pstar: 1.65, r: 0 },
+};
+
+document.querySelectorAll('.preset-btn-c').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const p = PRESETS_L[btn.dataset.preset];
+    document.querySelectorAll('.preset-btn-c').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    setSlider('l_p0',    p.p0,    'l_v_p0');
+    setSlider('l_K0',    p.K0,    'l_v_K0');
+    setSlider('l_Kmax',  p.Kmax,  'l_v_Kmax');
+    setSlider('l_pstar', p.pstar, 'l_v_pstar');
+    setSlider('l_beta',  p.beta,  'l_v_beta');
+    setSlider('l_r',     p.r,     'l_v_r');
+    setSlider('l_T',     1,       'l_v_T');
+    setSlider('l_sig',   1,       'l_v_sig');
+    setSlider('l_mu',    0,       'l_v_mu');
+    pt3Mode = 'minus';
+    document.querySelectorAll('.mode-btn-c').forEach(b => b.classList.toggle('active', b.dataset.mode === 'minus'));
+    document.getElementById('pt3-eq').textContent = PT_EQ_TEXT['minus'];
+    if (activeTab !== 3) {
+      activeTab = 3;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', +b.dataset.tab === 3));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-3'));
+    }
+    pendingVisibility3 = PRESET_SHOW;
     render();
   });
 });
