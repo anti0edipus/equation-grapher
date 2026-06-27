@@ -56,13 +56,22 @@
   .preset-meta { font-size: 10px; color: #4a4a7a; margin-top: 3px; }
 
   .mode-group { display: flex; gap: 4px; }
-  .mode-btn, .mode-btn-b {
+  .mode-btn, .mode-btn-b, .view-btn, .view-btn-b {
     flex: 1; padding: 6px 4px; background: #1a1a30; border: 1px solid #3a3a6a;
     border-radius: 5px; color: #6060aa; font-size: 11px; font-weight: 600;
     cursor: pointer; text-align: center; transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
-  .mode-btn:hover, .mode-btn-b:hover { background: #222240; color: #a0a0dd; }
-  .mode-btn.active, .mode-btn-b.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
+  .mode-btn:hover, .mode-btn-b:hover, .view-btn:hover, .view-btn-b:hover { background: #222240; color: #a0a0dd; }
+  .mode-btn.active, .mode-btn-b.active, .view-btn.active, .view-btn-b.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
+
+  .reseed-btn {
+    width: 100%; padding: 7px 8px;
+    background: #1a2a1a; border: 1px solid #2a5a3a;
+    border-radius: 5px; color: #60aa80; font-size: 11px; font-weight: 600;
+    cursor: pointer; text-align: center; letter-spacing: 0.04em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .reseed-btn:hover { background: #1e3a22; color: #80cc99; border-color: #3a8a55; }
 
   .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; }
   .toggle-label { font-size: 11.5px; color: #9090cc; line-height: 1.4; }
@@ -101,6 +110,18 @@
 
     <!-- ══ TAB 1: Simple Model ══ -->
     <div class="tab-panel active" id="panel-1">
+
+      <!-- View mode toggle -->
+      <div style="font-size:11px; color:#6060aa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">View mode</div>
+      <div class="mode-group">
+        <button class="view-btn active" data-view="det">Deterministic</button>
+        <button class="view-btn" data-view="sto">Stochastic</button>
+      </div>
+      <div id="reseed-row-1" style="display:none; margin-top:2px;">
+        <button id="reseed-1" class="reseed-btn">↻ Reseed (M=50)</button>
+      </div>
+      <div class="divider"></div>
+
       <h2>Presets</h2>
       <div class="preset-grid">
         <button class="preset-btn" data-preset="1a">Fig 1a</button>
@@ -230,6 +251,18 @@
 
     <!-- ══ TAB 2: Boredom depends on epsilon ══ -->
     <div class="tab-panel" id="panel-2">
+
+      <!-- View mode toggle -->
+      <div style="font-size:11px; color:#6060aa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">View mode</div>
+      <div class="mode-group">
+        <button class="view-btn-b active" data-view="det">Deterministic</button>
+        <button class="view-btn-b" data-view="sto">Stochastic</button>
+      </div>
+      <div id="reseed-row-2" style="display:none; margin-top:2px;">
+        <button id="reseed-2" class="reseed-btn">↻ Reseed (M=50)</button>
+      </div>
+      <div class="divider"></div>
+
       <h2>Presets</h2>
       <div class="preset-grid">
         <button class="preset-btn-b" data-preset="1a">Fig 1a</button>
@@ -378,6 +411,7 @@
 </div>
 
 <script>
+// ── Math helpers ──────────────────────────────────────────────────────────────
 function normalCDF(x) {
   const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
   const sign = x < 0 ? -1 : 1;
@@ -388,8 +422,37 @@ function normalCDF(x) {
 }
 
 const N_POINTS = 400;
-let pt1Mode = 'plus'; // Simple Model (Tab 1)
-let pt2Mode = 'plus'; // Boredom tab (Tab 2)
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let pt1Mode = 'plus', pt2Mode = 'plus';
+let stochMode1 = 'det', stochMode2 = 'det';
+let seed1 = 42, seed2 = 99;
+let plotIsStoch1 = false, plotIsStoch2 = false;
+
+// ── Seeded PRNG (mulberry32) + Box-Muller ─────────────────────────────────────
+function mulberry32(seed) {
+  seed >>>= 0;
+  return function() {
+    seed = (seed + 0x6D2B79F5) >>> 0;
+    let t = Math.imul(seed ^ (seed >>> 15), seed | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function genNormals(n, rand) {
+  const out = new Float64Array(n);
+  let i = 0;
+  while (i < n) {
+    let u1;
+    do { u1 = rand(); } while (u1 <= 0);
+    const u2 = rand();
+    const mag = Math.sqrt(-2 * Math.log(u1));
+    out[i++] = mag * Math.cos(2 * Math.PI * u2);
+    if (i < n) out[i++] = mag * Math.sin(2 * Math.PI * u2);
+  }
+  return out;
+}
 
 // ── Simple model (Tab 1) ─────────────────────────────────────────────────────
 function getParams1() {
@@ -425,7 +488,7 @@ function computeSeries1(p) {
   return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
 }
 
-// ── Boredom model (Tab 2) — k(ε) = K₀ + c/εᵃ ────────────────────────────────
+// ── Boredom model (Tab 2) ─────────────────────────────────────────────────────
 function getParams2() {
   return {
     p0:  +document.getElementById('b_p0').value,
@@ -449,7 +512,7 @@ function computeSeries2(p) {
   ts.forEach((t, i) => {
     const pti = pt[i], ei = epsilon[i], tau = T - t;
     if (tau <= 0 || pti <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,vs_arr,pp_arr,bp_arr,v11_arr,bt_arr].forEach(x=>x.push(NaN)); return; }
-    const ke = K0 + c / Math.pow(ei, a); // k(ε) = K₀ + c/εᵃ
+    const ke = K0 + c / Math.pow(ei, a);
     if (ke <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,vs_arr,pp_arr,bp_arr,v11_arr,bt_arr].forEach(x=>x.push(NaN)); return; }
     const d2 = (Math.log(ke / pti) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
     const Nd2 = normalCDF(d2), Nd1 = 1 - Nd2, d1 = -d2;
@@ -461,6 +524,101 @@ function computeSeries2(p) {
     vt_arr.push(v); vs_arr.push(vs); pp_arr.push(pp); bp_arr.push(bp); v11_arr.push(v11); bt_arr.push(b);
   });
   return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
+}
+
+// ── Stochastic simulation ─────────────────────────────────────────────────────
+function computeStochastic(tab, params, M, seed) {
+  const { p0, r, sig, mu, T, ptSign } = params;
+  const isBoredom = tab === 2;
+  // strike for simple = k; for boredom = K0, c, a
+  const strike0 = isBoredom ? params.K0 : params.k;
+  const c = isBoredom ? params.c : 0;
+  const a = isBoredom ? params.a : 1;
+
+  const N = N_POINTS;
+  const ts = Array.from({length: N}, (_, i) => i * T * 0.99 / (N - 1));
+  const sqrtDt = Math.sqrt(T * 0.99 / (N - 1));
+  const g = ptSign * (sig * sig / 2 - mu); // log-drift for median path
+
+  function v11at(pti, tau) {
+    if (tau <= 1e-10 || !isFinite(pti) || pti <= 0) return NaN;
+    const ei = 1 / pti;
+    const ke = isBoredom ? strike0 + c / Math.pow(ei, a) : strike0;
+    if (ke <= 0) return NaN;
+    const d2 = (Math.log(ke / pti) + (sig * sig / 2 - r) * tau) / (sig * Math.sqrt(tau));
+    const Nd2 = normalCDF(d2), Nd1 = 1 - Nd2;
+    return pti * Nd1 - ke * Math.exp(-r * tau) * Nd2;
+  }
+
+  const rand = mulberry32(seed);
+  const zs = genNormals(M * (N - 1), rand);
+
+  // Simulate M paths of v11
+  const paths = [];
+  for (let m = 0; m < M; m++) {
+    const path = new Array(N);
+    let W = 0;
+    path[0] = v11at(p0, T - ts[0]);
+    for (let i = 1; i < N; i++) {
+      W += sqrtDt * zs[m * (N - 1) + (i - 1)];
+      path[i] = v11at(p0 * Math.exp(g * ts[i] - sig * W), T - ts[i]);
+    }
+    paths.push(path);
+  }
+
+  // Empirical mean
+  const emp_mean = ts.map((_, i) => {
+    let sum = 0, cnt = 0;
+    for (const path of paths) { if (isFinite(path[i])) { sum += path[i]; cnt++; } }
+    return cnt > 0 ? sum / cnt : NaN;
+  });
+
+  // 10th / 90th percentiles
+  const p10 = [], p90 = [];
+  for (let i = 0; i < N; i++) {
+    const vals = paths.map(p => p[i]).filter(isFinite).sort((a, b) => a - b);
+    p10.push(vals.length > 0 ? vals[Math.floor(vals.length * 0.1)] : NaN);
+    p90.push(vals.length > 0 ? vals[Math.floor(vals.length * 0.9)] : NaN);
+  }
+
+  // Median path: v11 along p0*exp(g*t)
+  const median_v11 = ts.map((t, i) => v11at(p0 * Math.exp(g * t), T - t));
+
+  // Arithmetic mean path: E[pₜ] = p0*exp((g + σ²/2)*t)
+  const arith_g = g + sig * sig / 2;
+  const arith_v11 = ts.map((t, i) => v11at(p0 * Math.exp(arith_g * t), T - t));
+
+  return { ts, paths, emp_mean, p10, p90, median_v11, arith_v11 };
+}
+
+function buildStochasticTraces(tab) {
+  const M = 50;
+  const params = tab === 1 ? getParams1() : getParams2();
+  const seed = tab === 1 ? seed1 : seed2;
+  const { ts, paths, emp_mean, p10, p90, median_v11, arith_v11 } =
+    computeStochastic(tab, params, M, seed);
+
+  // Bundle all paths into one trace (null gaps between segments)
+  const bx = [], by = [];
+  paths.forEach(path => { bx.push(...ts, null); by.push(...path, null); });
+
+  const ptLabel = params.ptSign > 0 ? 'Improving' : params.ptSign < 0 ? 'Worsening' : 'Constant';
+
+  return [
+    // Percentile band: lower then upper (fill tonexty)
+    { x: ts, y: p10, type: 'scatter', mode: 'lines', showlegend: false, hoverinfo: 'skip',
+      line: { color: 'rgba(204,68,255,0)', width: 0 } },
+    { x: ts, y: p90, name: '10–90th pctile band', type: 'scatter', mode: 'lines',
+      fill: 'tonexty', fillcolor: 'rgba(204,68,255,0.12)',
+      line: { color: 'rgba(204,68,255,0)', width: 0 }, hoverinfo: 'skip' },
+    // All 50 paths (single bundled trace)
+    { x: bx, y: by, name: `v Eq.11 paths (M=${M})`, type: 'scatter', mode: 'lines',
+      line: { color: 'rgba(204,68,255,0.2)', width: 0.8 }, hoverinfo: 'skip' },
+    // Summary curves
+    line(ts, median_v11, `v Eq.11 — median pₜ (${ptLabel})`, '#cc44ff'),
+    line(ts, arith_v11,  'v Eq.11 — mean pₜ',               '#3399ff', 'dash'),
+    line(ts, emp_mean,   'v Eq.11 — empirical mean',          '#ff6699'),
+  ];
 }
 
 // ── Plot helpers ──────────────────────────────────────────────────────────────
@@ -497,6 +655,9 @@ function buildFillTraces(v11, ts, toggleId) {
 }
 
 function buildTraces(tab) {
+  const isStochastic = (tab === 1 ? stochMode1 : stochMode2) === 'sto';
+  if (isStochastic) return buildStochasticTraces(tab);
+
   const { ts, epsilon, pt, d1, d2, Nd1, Nd2, vt, vs, pp, bp, v11, bt } =
     tab === 1 ? computeSeries1(getParams1()) : computeSeries2(getParams2());
   const toggleId = tab === 1 ? 'v11-fill-toggle' : 'v11-fill-toggle-b';
@@ -517,6 +678,7 @@ function buildTraces(tab) {
   ];
 }
 
+// ── Layout & config ───────────────────────────────────────────────────────────
 const LAYOUT = {
   paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: '#0a0a18',
   font: { color: '#8080bb', size: 11 },
@@ -535,11 +697,15 @@ let plotActiveTab = null;
 let pendingVisibility1 = null;
 let pendingVisibility2 = null;
 
+// ── Render ────────────────────────────────────────────────────────────────────
 function render() {
   const traces = buildTraces(activeTab);
   const plotEl = document.getElementById('plot');
+  const isStochastic = (activeTab === 1 ? stochMode1 : stochMode2) === 'sto';
+  const prevIsStoch = activeTab === 1 ? plotIsStoch1 : plotIsStoch2;
   const pendingVis = activeTab === 1 ? pendingVisibility1 : pendingVisibility2;
 
+  // Annotation: ratio
   if (activeTab === 1) {
     const p = getParams1();
     const ratio = p.p0 / p.k, rs = ratio.toFixed(3);
@@ -558,10 +724,11 @@ function render() {
     Plotly.newPlot('plot', traces, LAYOUT, CONFIG);
     initialized = true;
   } else {
-    if (pendingVis !== null) {
+    const sameStructure = (plotActiveTab === activeTab) && (isStochastic === prevIsStoch);
+    if (!isStochastic && pendingVis !== null) {
       traces.forEach((t, i) => { if (i < 12 && !pendingVis.has(i)) t.visible = 'legendonly'; });
       if (activeTab === 1) pendingVisibility1 = null; else pendingVisibility2 = null;
-    } else if (plotEl.data && plotActiveTab === activeTab) {
+    } else if (!isStochastic && sameStructure && plotEl.data) {
       plotEl.data.forEach((existing, i) => {
         if (i < 12 && i < traces.length && existing.visible === 'legendonly') {
           traces[i].visible = 'legendonly';
@@ -572,7 +739,9 @@ function render() {
     }
     Plotly.react('plot', traces, LAYOUT, CONFIG);
   }
+
   plotActiveTab = activeTab;
+  if (activeTab === 1) plotIsStoch1 = isStochastic; else plotIsStoch2 = isStochastic;
 }
 
 // ── Tab switching ─────────────────────────────────────────────────────────────
@@ -585,6 +754,35 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `panel-${tab}`));
     render();
   });
+});
+
+// ── View mode (Det / Stochastic) ──────────────────────────────────────────────
+document.querySelectorAll('.view-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    stochMode1 = btn.dataset.view;
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('reseed-row-1').style.display = stochMode1 === 'sto' ? '' : 'none';
+    if (activeTab === 1) render();
+  });
+});
+
+document.querySelectorAll('.view-btn-b').forEach(btn => {
+  btn.addEventListener('click', () => {
+    stochMode2 = btn.dataset.view;
+    document.querySelectorAll('.view-btn-b').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('reseed-row-2').style.display = stochMode2 === 'sto' ? '' : 'none';
+    if (activeTab === 2) render();
+  });
+});
+
+// ── Reseed buttons ────────────────────────────────────────────────────────────
+document.getElementById('reseed-1').addEventListener('click', () => {
+  seed1 = Math.floor(Math.random() * 0x100000000);
+  if (activeTab === 1 && stochMode1 === 'sto') render();
+});
+document.getElementById('reseed-2').addEventListener('click', () => {
+  seed2 = Math.floor(Math.random() * 0x100000000);
+  if (activeTab === 2 && stochMode2 === 'sto') render();
 });
 
 // ── Slider bindings (Tab 1 — Simple) ─────────────────────────────────────────
@@ -714,7 +912,7 @@ document.querySelectorAll('.preset-btn-b').forEach(btn => {
     document.querySelectorAll('.preset-btn-b').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     setSlider('b_p0', p.p0, 'b_v_p0'); setSlider('b_K0', p.K0, 'b_v_K0');
-    setSlider('b_c', 0, 'b_v_c'); // c=0 → k(ε)=K₀ constant, matches Simple preset shape
+    setSlider('b_c', 0, 'b_v_c');
     setSlider('b_r', p.r, 'b_v_r'); setSlider('b_T', 1, 'b_v_T');
     setSlider('b_sig', 1, 'b_v_sig'); setSlider('b_mu', 0, 'b_v_mu');
     document.getElementById('b-ratio-slider').value = Math.min(10, p.p0 / p.K0);
