@@ -1056,6 +1056,7 @@ function buildTraces(tab) {
     tab === 3 ? computeSeries3(getParams3()) :
                 computeSeries4(getParams4());
   const toggleId = tab === 1 ? 'v11-fill-toggle' : tab === 2 ? 'v11-fill-toggle-b' : tab === 3 ? 'v11-fill-toggle-c' : 'v11-fill-toggle-d';
+  const baseTraces = [
     line(ts, epsilon, 'ε(t) — Epsilon',                      C.epsilon),
     line(ts, pt,      'pₜ — Felt Prediction',                 C.pleasure),
     line(ts, d2,      'd₂',                                   C.d2),
