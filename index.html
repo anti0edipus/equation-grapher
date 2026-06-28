@@ -46,26 +46,26 @@
   .divider { height: 1px; background: #2a2a4a; margin: 2px 0; }
 
   .preset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-  .preset-btn, .preset-btn-b, .preset-btn-c {
+  .preset-btn, .preset-btn-b, .preset-btn-c, .preset-btn-d {
     padding: 6px 4px; background: #1a1a30; border: 1px solid #3a3a6a;
     border-radius: 5px; color: #8080cc; font-size: 11px; font-weight: 600;
     cursor: pointer; text-align: center; transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
-  .preset-btn:hover, .preset-btn-b:hover, .preset-btn-c:hover { background: #252545; color: #b0b0ff; }
-  .preset-btn.active, .preset-btn-b.active, .preset-btn-c.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
+  .preset-btn:hover, .preset-btn-b:hover, .preset-btn-c:hover, .preset-btn-d:hover { background: #252545; color: #b0b0ff; }
+  .preset-btn.active, .preset-btn-b.active, .preset-btn-c.active, .preset-btn-d.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
   .preset-meta { font-size: 10px; color: #4a4a7a; margin-top: 3px; }
 
   .mode-group { display: flex; gap: 4px; }
-  .mode-btn, .mode-btn-b, .mode-btn-c,
-  .view-btn, .view-btn-b, .view-btn-c {
+  .mode-btn, .mode-btn-b, .mode-btn-c, .mode-btn-d,
+  .view-btn, .view-btn-b, .view-btn-c, .view-btn-d {
     flex: 1; padding: 6px 4px; background: #1a1a30; border: 1px solid #3a3a6a;
     border-radius: 5px; color: #6060aa; font-size: 11px; font-weight: 600;
     cursor: pointer; text-align: center; transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
-  .mode-btn:hover, .mode-btn-b:hover, .mode-btn-c:hover,
-  .view-btn:hover, .view-btn-b:hover, .view-btn-c:hover { background: #222240; color: #a0a0dd; }
-  .mode-btn.active, .mode-btn-b.active, .mode-btn-c.active,
-  .view-btn.active, .view-btn-b.active, .view-btn-c.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
+  .mode-btn:hover, .mode-btn-b:hover, .mode-btn-c:hover, .mode-btn-d:hover,
+  .view-btn:hover, .view-btn-b:hover, .view-btn-c:hover, .view-btn-d:hover { background: #222240; color: #a0a0dd; }
+  .mode-btn.active, .mode-btn-b.active, .mode-btn-c.active, .mode-btn-d.active,
+  .view-btn.active, .view-btn-b.active, .view-btn-c.active, .view-btn-d.active { background: #2a2a6a; border-color: #6060cc; color: #d0d0ff; }
 
   .reseed-btn {
     width: 100%; padding: 7px 8px;
@@ -85,7 +85,7 @@
   .toggle input:checked + .toggle-slider { background: #3a3acc; }
   .toggle input:checked + .toggle-slider:before { transform: translateX(16px); background: #a0a0ff; }
 
-  #eq-panel-1, #eq-panel-2, #eq-panel-3 {
+  #eq-panel-1, #eq-panel-2, #eq-panel-3, #eq-panel-4 {
     background: #0d0d1f; border: 1px solid #2a2a4a; border-radius: 6px;
     padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
   }
@@ -106,6 +106,7 @@
       <div class="tab-btn active" data-tab="1">Simple Model</div>
       <div class="tab-btn" data-tab="2">Boredom dep. on ε</div>
       <div class="tab-btn" data-tab="3">Boredom Logistic</div>
+      <div class="tab-btn" data-tab="4">Homeostatic</div>
     </div>
   </div>
   <div class="tab-divider"></div>
@@ -542,6 +543,165 @@
       </div>
     </div>
 
+    <!-- ══ TAB 4: Homeostatic deadband ══ -->
+    <div class="tab-panel" id="panel-4">
+      <div style="font-size:11px; color:#6060aa; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:2px;">View mode</div>
+      <div class="mode-group">
+        <button class="view-btn-d active" data-view="det">Deterministic</button>
+        <button class="view-btn-d" data-view="sto">Stochastic</button>
+      </div>
+      <div id="reseed-row-4" style="display:none; margin-top:2px;">
+        <button id="reseed-4" class="reseed-btn">↻ Reseed (M=50)</button>
+      </div>
+      <div class="divider"></div>
+      <h2>Presets</h2>
+      <div class="preset-grid">
+        <button class="preset-btn-d" data-preset="cross">Zone cross</button>
+        <button class="preset-btn-d" data-preset="inzone">In zone</button>
+        <button class="preset-btn-d" data-preset="mastery">Mastery</button>
+        <button class="preset-btn-d" data-preset="failure">Failure</button>
+        <button class="preset-btn-d" data-preset="asymm">Asymmetric</button>
+        <button class="preset-btn-d" data-preset="r1">r=1 cross</button>
+      </div>
+      <div class="preset-meta">Zone cross: p₀=1, Improving, ε falls 1→0.61, crossing [0.70, 0.90]</div>
+      <div class="preset-meta" style="margin-top:4px; color:#7070aa;">Wall curvature (Zone cross base)</div>
+      <div class="preset-grid" style="grid-template-columns:1fr 1fr;">
+        <button class="preset-btn-d" data-preset="vshape">n=1 (V)</button>
+        <button class="preset-btn-d" data-preset="basin">n=3 (bowl)</button>
+      </div>
+      <div class="divider"></div>
+      <h2>Parameters</h2>
+      <div class="param-group">
+        <div class="param">
+          <label>p₀ — pred. pleasure <span id="h_v_p0">1.00</span></label>
+          <input type="range" id="h_p0" min="0.1" max="5" step="0.05" value="1.0">
+        </div>
+        <div style="font-size:11px; color:#6060aa; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.08em;">pₜ mode</div>
+        <div class="mode-group">
+          <button class="mode-btn-d active" data-mode="plus">Improving</button>
+          <button class="mode-btn-d" data-mode="minus">Worsening</button>
+          <button class="mode-btn-d" data-mode="const">Constant</button>
+        </div>
+        <div style="background:#0d0d1f; border:1px solid #2a2a4a; border-radius:5px; padding:8px 10px; font-size:11px; color:#7070aa; line-height:1.7;">
+          <div style="color:#9090cc; font-family:'Menlo',monospace; margin-bottom:5px;">ε(t) = 1/pₜ — boredom tracks error ε</div>
+          <div><span style="color:#00cc44;">s = +1</span> <em>Improving</em>: ε falls → may exit zone (mastery).</div>
+          <div><span style="color:#ff6644;">s = −1</span> <em>Worsening</em>: ε rises → may exit zone (failure).</div>
+          <div><span style="color:#aaaaee;">s = 0 &nbsp;</span> <em>Constant</em>: ε = 1/p₀, stays put in zone.</div>
+        </div>
+        <div class="param">
+          <label>K₀ — boredom floor (in zone) <span id="h_v_K0">0.50</span></label>
+          <input type="range" id="h_K0" min="0" max="2" step="0.05" value="0.5">
+        </div>
+        <div class="param">
+          <label>ε_lo — zone lower edge <span id="h_v_eLo">0.70</span></label>
+          <input type="range" id="h_eLo" min="0.05" max="3" step="0.05" value="0.70">
+        </div>
+        <div class="param">
+          <label>ε_hi — zone upper edge <span id="h_v_eHi">0.90</span></label>
+          <input type="range" id="h_eHi" min="0.05" max="3" step="0.05" value="0.90">
+        </div>
+        <div class="param">
+          <label>n — wall curvature <span id="h_v_n">2</span></label>
+          <input type="range" id="h_n" min="1" max="4" step="1" value="2">
+        </div>
+        <div class="param">
+          <label>c_lo — mastery-side gain <span id="h_v_cLo">2.00</span></label>
+          <input type="range" id="h_cLo" min="0" max="10" step="0.1" value="2.0">
+        </div>
+        <div class="param">
+          <label>c_hi — failure-side gain <span id="h_v_cHi">2.00</span></label>
+          <input type="range" id="h_cHi" min="0" max="10" step="0.1" value="2.0">
+        </div>
+        <div class="param">
+          <label>r — risk-free rate <span id="h_v_r">0.050</span></label>
+          <input type="range" id="h_r" min="0" max="5" step="0.01" value="0.05">
+        </div>
+        <div class="param">
+          <label>σ — volatility <span id="h_v_sig">1.00</span></label>
+          <input type="range" id="h_sig" min="0.01" max="1" step="0.01" value="1.0">
+        </div>
+        <div class="param">
+          <label>μ — drift <span id="h_v_mu">0.00</span></label>
+          <input type="range" id="h_mu" min="-0.5" max="0.5" step="0.01" value="0.0">
+        </div>
+        <div class="param">
+          <label>T — maturity <span id="h_v_T">1</span></label>
+          <input type="range" id="h_T" min="1" max="30" step="0.5" value="1">
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="toggle-row">
+        <div class="toggle-label">Show v Eq.11 sign fills</div>
+        <label class="toggle">
+          <input type="checkbox" id="v11-fill-toggle-d">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="divider"></div>
+      <h2>Equations</h2>
+      <div id="eq-panel-4">
+        <div class="eq-row">
+          <div class="eq-name" style="color:#aa66ff">k(ε) — Homeostatic Deadband</div>
+          <div class="eq-formula">k = K₀ + c_lo·(ε_lo−ε)₊ⁿ<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ c_hi·(ε−ε_hi)₊ⁿ</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#5599aa; font-size:9px;">ε ∈ [ε_lo, ε_hi]: k = K₀ (comfort zone, flat floor)</div>
+          <div class="eq-formula" style="font-size:10.5px; color:#7070aa;">ε &lt; ε_lo: mastery wall (c_lo) active.<br>ε &gt; ε_hi: failure wall (c_hi) active.</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#7070ff">ε(t) — Epsilon</div>
+          <div class="eq-formula">ε(t) = 1 / pₜ</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff70a0">pₜ — Felt Prediction Pleasure</div>
+          <div class="eq-formula" id="pt4-eq">pₜ = p₀ · exp[+(σ²/2 − μ)t]</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffaa40">d₂</div>
+          <div class="eq-formula">d₂ = [ln(k(ε) / pₜ)<br>&nbsp;&nbsp;&nbsp;&nbsp;+ (σ²/2 − r)(T−t)]<br>&nbsp;&nbsp;&nbsp;&nbsp;/ (σ√(T−t))</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#aaaaff">N(d₁), N(d₂)</div>
+          <div class="eq-formula">N(d₁) = 1 − N(d₂) = Φ(d₁)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#3399ff">v(t) — Felt Experience</div>
+          <div class="eq-formula">v = pₜ·[1−N(d₂)]<br>&nbsp;&nbsp;− k(ε)·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ffd700">v — Felt Experience (simplified)</div>
+          <div class="eq-formula">v = pₜ − k(ε)·e<sup>−r(T−t)</sup></div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#00ffaa">p_plot — Prediction (weighted)</div>
+          <div class="eq-formula">p_plot = pₜ · N(d₁)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff6644">b_plot — Boredom (weighted)</div>
+          <div class="eq-formula">b_plot = k(ε)·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#cc44ff">v — Experience Eq.11</div>
+          <div class="eq-formula">v = pₜ·N(d₁) − k(ε)·e<sup>−r(T−t)</sup>·N(d₂)</div>
+        </div>
+        <div class="divider"></div>
+        <div class="eq-row">
+          <div class="eq-name" style="color:#ff2020">b(t) — Felt Boredom</div>
+          <div class="eq-formula">b = k(ε) · e<sup>−r(T−t)</sup></div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /sidebar-body -->
 </div><!-- /sidebar -->
 
@@ -569,11 +729,11 @@ function logistic(x) {
 const N_POINTS = 400;
 
 // ── State ─────────────────────────────────────────────────────────────────────
-let pt1Mode = 'plus', pt2Mode = 'plus', pt3Mode = 'plus';
-let stochMode1 = 'det', stochMode2 = 'det', stochMode3 = 'det';
-let seed1 = 42, seed2 = 99, seed3 = 137;
-let plotIsStoch1 = false, plotIsStoch2 = false, plotIsStoch3 = false;
-let pendingVisibility1 = null, pendingVisibility2 = null, pendingVisibility3 = null;
+let pt1Mode = 'plus', pt2Mode = 'plus', pt3Mode = 'plus', pt4Mode = 'plus';
+let stochMode1 = 'det', stochMode2 = 'det', stochMode3 = 'det', stochMode4 = 'det';
+let seed1 = 42, seed2 = 99, seed3 = 137, seed4 = 251;
+let plotIsStoch1 = false, plotIsStoch2 = false, plotIsStoch3 = false, plotIsStoch4 = false;
+let pendingVisibility1 = null, pendingVisibility2 = null, pendingVisibility3 = null, pendingVisibility4 = null;
 
 // ── Seeded PRNG (mulberry32) + Box-Muller ─────────────────────────────────────
 function mulberry32(seed) {
@@ -608,9 +768,17 @@ function makeKeFunc(tab, params) {
   } else if (tab === 2) {
     const { K0, c, a } = params;
     return (pti) => K0 + c / Math.pow(1 / pti, a); // = K0 + c * pti^a
-  } else {
+  } else if (tab === 3) {
     const { K0, Kmax, beta, pstar } = params;
     return (pti) => K0 + (Kmax - K0) * logistic(beta * (pti - pstar));
+  } else {
+    const { K0, eLo, eHi, n, cLo, cHi } = params;
+    return (pti) => {
+      const eps = 1 / pti;
+      const below = Math.max(eLo - eps, 0);
+      const above = Math.max(eps - eHi, 0);
+      return Math.max(K0 + cLo * Math.pow(below, n) + cHi * Math.pow(above, n), 1e-9);
+    };
   }
 }
 
@@ -725,6 +893,47 @@ function computeSeries3(p) {
   return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
 }
 
+// ── Homeostatic model (Tab 4) ─────────────────────────────────────────────────
+function getParams4() {
+  return {
+    p0:  +document.getElementById('h_p0').value,
+    K0:  +document.getElementById('h_K0').value,
+    eLo: +document.getElementById('h_eLo').value,
+    eHi: +document.getElementById('h_eHi').value,
+    n:   +document.getElementById('h_n').value,
+    cLo: +document.getElementById('h_cLo').value,
+    cHi: +document.getElementById('h_cHi').value,
+    r:   +document.getElementById('h_r').value,
+    sig: +document.getElementById('h_sig').value,
+    mu:  +document.getElementById('h_mu').value,
+    T:   +document.getElementById('h_T').value,
+    ptSign: pt4Mode === 'plus' ? 1 : pt4Mode === 'minus' ? -1 : 0,
+  };
+}
+
+function computeSeries4(p) {
+  const { p0, r, sig, mu, T, ptSign } = p;
+  const keFunc = makeKeFunc(4, p);
+  const ts = Array.from({length: N_POINTS}, (_, i) => i * (T * 0.99) / (N_POINTS - 1));
+  const pt      = ts.map(t => p0 * Math.exp(ptSign * (sig*sig/2 - mu) * t));
+  const epsilon = pt.map(pti => 1 / pti);
+  const d2_arr=[], d1_arr=[], Nd1_arr=[], Nd2_arr=[], vt_arr=[], vs_arr=[], pp_arr=[], bp_arr=[], v11_arr=[], bt_arr=[];
+  ts.forEach((t, i) => {
+    const pti = pt[i], tau = T - t;
+    if (tau <= 0 || pti <= 0) { [d2_arr,d1_arr,Nd1_arr,Nd2_arr,vt_arr,vs_arr,pp_arr,bp_arr,v11_arr,bt_arr].forEach(x=>x.push(NaN)); return; }
+    const ke = keFunc(pti);
+    const d2 = (Math.log(ke / pti) + (sig*sig/2 - r) * tau) / (sig * Math.sqrt(tau));
+    const Nd2 = normalCDF(d2), Nd1 = 1 - Nd2, d1 = -d2;
+    const discount = Math.exp(-r * tau);
+    const v = pti * (1 - Nd2) - ke * discount * Nd2;
+    const b = ke * discount, vs = pti - ke * discount;
+    const pp = pti * Nd1, bp = ke * discount * Nd2, v11 = pp - bp;
+    d2_arr.push(d2); d1_arr.push(d1); Nd1_arr.push(Nd1); Nd2_arr.push(Nd2);
+    vt_arr.push(v); vs_arr.push(vs); pp_arr.push(pp); bp_arr.push(bp); v11_arr.push(v11); bt_arr.push(b);
+  });
+  return { ts, epsilon, pt, d1: d1_arr, d2: d2_arr, Nd1: Nd1_arr, Nd2: Nd2_arr, vt: vt_arr, vs: vs_arr, pp: pp_arr, bp: bp_arr, v11: v11_arr, bt: bt_arr };
+}
+
 // ── Stochastic simulation ─────────────────────────────────────────────────────
 function computeStochastic(tab, params, M, seed) {
   const { p0, r, sig, mu, T, ptSign } = params;
@@ -780,8 +989,8 @@ function computeStochastic(tab, params, M, seed) {
 
 function buildStochasticTraces(tab) {
   const M = 50;
-  const params = tab === 1 ? getParams1() : tab === 2 ? getParams2() : getParams3();
-  const seed = tab === 1 ? seed1 : tab === 2 ? seed2 : seed3;
+  const params = tab === 1 ? getParams1() : tab === 2 ? getParams2() : tab === 3 ? getParams3() : getParams4();
+  const seed = tab === 1 ? seed1 : tab === 2 ? seed2 : tab === 3 ? seed3 : seed4;
   const { ts, paths, emp_mean, p10, p90, median_v11, arith_v11 } =
     computeStochastic(tab, params, M, seed);
 
@@ -838,13 +1047,15 @@ function buildFillTraces(v11, ts, toggleId) {
 }
 
 function buildTraces(tab) {
-  const isStochastic = (tab === 1 ? stochMode1 : tab === 2 ? stochMode2 : stochMode3) === 'sto';
+  const isStochastic = (tab === 1 ? stochMode1 : tab === 2 ? stochMode2 : tab === 3 ? stochMode3 : stochMode4) === 'sto';
   if (isStochastic) return buildStochasticTraces(tab);
 
   const { ts, epsilon, pt, d1, d2, Nd1, Nd2, vt, vs, pp, bp, v11, bt } =
-    tab === 1 ? computeSeries1(getParams1()) : tab === 2 ? computeSeries2(getParams2()) : computeSeries3(getParams3());
-  const toggleId = tab === 1 ? 'v11-fill-toggle' : tab === 2 ? 'v11-fill-toggle-b' : 'v11-fill-toggle-c';
-  return [
+    tab === 1 ? computeSeries1(getParams1()) :
+    tab === 2 ? computeSeries2(getParams2()) :
+    tab === 3 ? computeSeries3(getParams3()) :
+                computeSeries4(getParams4());
+  const toggleId = tab === 1 ? 'v11-fill-toggle' : tab === 2 ? 'v11-fill-toggle-b' : tab === 3 ? 'v11-fill-toggle-c' : 'v11-fill-toggle-d';
     line(ts, epsilon, 'ε(t) — Epsilon',                      C.epsilon),
     line(ts, pt,      'pₜ — Felt Prediction',                 C.pleasure),
     line(ts, d2,      'd₂',                                   C.d2),
@@ -859,6 +1070,17 @@ function buildTraces(tab) {
     line(ts, bt,      'b(t) — Felt Boredom',                 C.boredom),
     ...buildFillTraces(v11, ts, toggleId),
   ];
+  if (tab === 4) {
+    const p4 = getParams4();
+    const t0 = ts[0], t1 = ts[ts.length - 1];
+    baseTraces.push(
+      { x: [t0, t1], y: [p4.eLo, p4.eLo], name: 'ε_lo — zone lower', type: 'scatter', mode: 'lines',
+        line: { color: '#20ddbb', width: 1.5, dash: 'dashdot' } },
+      { x: [t0, t1], y: [p4.eHi, p4.eHi], name: 'ε_hi — zone upper', type: 'scatter', mode: 'lines',
+        line: { color: '#ddaa20', width: 1.5, dash: 'dashdot' } }
+    );
+  }
+  return baseTraces;
 }
 
 // ── Layout & config ───────────────────────────────────────────────────────────
@@ -882,9 +1104,9 @@ let plotActiveTab = null;
 function render() {
   const traces = buildTraces(activeTab);
   const plotEl = document.getElementById('plot');
-  const isStochastic = (activeTab === 1 ? stochMode1 : activeTab === 2 ? stochMode2 : stochMode3) === 'sto';
-  const prevIsStoch  = activeTab === 1 ? plotIsStoch1 : activeTab === 2 ? plotIsStoch2 : plotIsStoch3;
-  const pendingVis   = activeTab === 1 ? pendingVisibility1 : activeTab === 2 ? pendingVisibility2 : pendingVisibility3;
+  const isStochastic = (activeTab === 1 ? stochMode1 : activeTab === 2 ? stochMode2 : activeTab === 3 ? stochMode3 : stochMode4) === 'sto';
+  const prevIsStoch  = activeTab === 1 ? plotIsStoch1 : activeTab === 2 ? plotIsStoch2 : activeTab === 3 ? plotIsStoch3 : plotIsStoch4;
+  const pendingVis   = activeTab === 1 ? pendingVisibility1 : activeTab === 2 ? pendingVisibility2 : activeTab === 3 ? pendingVisibility3 : pendingVisibility4;
 
   if (activeTab === 1) {
     const p = getParams1();
@@ -898,11 +1120,17 @@ function render() {
     document.getElementById('b-ratio').textContent = rs;
     document.getElementById('b-ratio-slider').value = Math.min(10, Math.max(0.1, ratio));
     LAYOUT.annotations = [{ text: `p₀/K₀ = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 13, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
-  } else {
+  } else if (activeTab === 3) {
     const p = getParams3();
     const ratio = p.p0 / p.Kmax, rs = ratio.toFixed(3);
     const kp0 = (p.K0 + (p.Kmax - p.K0) * logistic(p.beta * (p.p0 - p.pstar))).toFixed(3);
     LAYOUT.annotations = [{ text: `p₀/K_max = ${rs}  |  k(p₀) = ${kp0}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 12, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
+  } else {
+    const p = getParams4();
+    const eps0 = 1 / p.p0;
+    const status = eps0 < p.eLo ? 'mastery side' : eps0 > p.eHi ? 'failure side' : 'in zone';
+    const ke0 = Math.max(p.K0 + p.cLo * Math.pow(Math.max(p.eLo - eps0, 0), p.n) + p.cHi * Math.pow(Math.max(eps0 - p.eHi, 0), p.n), 1e-9);
+    LAYOUT.annotations = [{ text: `ε(0)=${eps0.toFixed(3)}  zone[${p.eLo.toFixed(2)},${p.eHi.toFixed(2)}]  ${status}  k(ε₀)=${ke0.toFixed(3)}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 11, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
   }
 
   if (!initialized) {
@@ -914,7 +1142,8 @@ function render() {
       traces.forEach((t, i) => { if (i < 12 && !pendingVis.has(i)) t.visible = 'legendonly'; });
       if (activeTab === 1) pendingVisibility1 = null;
       else if (activeTab === 2) pendingVisibility2 = null;
-      else pendingVisibility3 = null;
+      else if (activeTab === 3) pendingVisibility3 = null;
+      else pendingVisibility4 = null;
     } else if (!isStochastic && sameStructure && plotEl.data) {
       plotEl.data.forEach((existing, i) => {
         if (i < 12 && i < traces.length && existing.visible === 'legendonly') {
@@ -930,7 +1159,8 @@ function render() {
   plotActiveTab = activeTab;
   if (activeTab === 1) plotIsStoch1 = isStochastic;
   else if (activeTab === 2) plotIsStoch2 = isStochastic;
-  else plotIsStoch3 = isStochastic;
+  else if (activeTab === 3) plotIsStoch3 = isStochastic;
+  else plotIsStoch4 = isStochastic;
 }
 
 // ── Tab switching ─────────────────────────────────────────────────────────────
@@ -973,6 +1203,15 @@ document.querySelectorAll('.view-btn-c').forEach(btn => {
   });
 });
 
+document.querySelectorAll('.view-btn-d').forEach(btn => {
+  btn.addEventListener('click', () => {
+    stochMode4 = btn.dataset.view;
+    document.querySelectorAll('.view-btn-d').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('reseed-row-4').style.display = stochMode4 === 'sto' ? '' : 'none';
+    if (activeTab === 4) render();
+  });
+});
+
 // ── Reseed buttons ────────────────────────────────────────────────────────────
 document.getElementById('reseed-1').addEventListener('click', () => {
   seed1 = Math.floor(Math.random() * 0x100000000);
@@ -985,6 +1224,10 @@ document.getElementById('reseed-2').addEventListener('click', () => {
 document.getElementById('reseed-3').addEventListener('click', () => {
   seed3 = Math.floor(Math.random() * 0x100000000);
   if (activeTab === 3 && stochMode3 === 'sto') render();
+});
+document.getElementById('reseed-4').addEventListener('click', () => {
+  seed4 = Math.floor(Math.random() * 0x100000000);
+  if (activeTab === 4 && stochMode4 === 'sto') render();
 });
 
 // ── Slider bindings (Tab 1 — Simple) ─────────────────────────────────────────
@@ -1028,6 +1271,43 @@ document.getElementById('reseed-3').addEventListener('click', () => {
   });
 });
 
+// ── Slider bindings (Tab 4 — Homeostatic) ────────────────────────────────────
+[
+  {id:'h_p0', lbl:'h_v_p0'}, {id:'h_K0', lbl:'h_v_K0'},
+  {id:'h_n',  lbl:'h_v_n'},  {id:'h_cLo', lbl:'h_v_cLo'}, {id:'h_cHi', lbl:'h_v_cHi'},
+  {id:'h_r',  lbl:'h_v_r'},  {id:'h_sig', lbl:'h_v_sig'},
+  {id:'h_mu', lbl:'h_v_mu'}, {id:'h_T',   lbl:'h_v_T'},
+].forEach(({id, lbl}) => {
+  const el = document.getElementById(id), lb = document.getElementById(lbl);
+  el.addEventListener('input', () => {
+    const v = parseFloat(el.value), s = parseFloat(el.step);
+    lb.textContent = v.toFixed(s < 0.01 ? 3 : s < 1 ? 2 : 0);
+    if (activeTab === 4) render();
+  });
+});
+
+// ε_lo / ε_hi with cross-clamp
+document.getElementById('h_eLo').addEventListener('input', function() {
+  const v = parseFloat(this.value);
+  document.getElementById('h_v_eLo').textContent = v.toFixed(2);
+  const hiEl = document.getElementById('h_eHi');
+  if (v >= parseFloat(hiEl.value)) {
+    hiEl.value = Math.min(v + 0.05, parseFloat(hiEl.max));
+    document.getElementById('h_v_eHi').textContent = parseFloat(hiEl.value).toFixed(2);
+  }
+  if (activeTab === 4) render();
+});
+document.getElementById('h_eHi').addEventListener('input', function() {
+  const v = parseFloat(this.value);
+  document.getElementById('h_v_eHi').textContent = v.toFixed(2);
+  const loEl = document.getElementById('h_eLo');
+  if (v <= parseFloat(loEl.value)) {
+    loEl.value = Math.max(v - 0.05, parseFloat(loEl.min));
+    document.getElementById('h_v_eLo').textContent = parseFloat(loEl.value).toFixed(2);
+  }
+  if (activeTab === 4) render();
+});
+
 // ── pₜ mode buttons ───────────────────────────────────────────────────────────
 const PT_EQ_TEXT = {
   'plus':  'pₜ = p₀ · exp[+(σ²/2 − μ)t]',
@@ -1062,10 +1342,20 @@ document.querySelectorAll('.mode-btn-c').forEach(btn => {
   });
 });
 
+document.querySelectorAll('.mode-btn-d').forEach(btn => {
+  btn.addEventListener('click', () => {
+    pt4Mode = btn.dataset.mode;
+    document.querySelectorAll('.mode-btn-d').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('pt4-eq').textContent = PT_EQ_TEXT[pt4Mode];
+    if (activeTab === 4) render();
+  });
+});
+
 // ── v Eq.11 fill toggles ──────────────────────────────────────────────────────
 document.getElementById('v11-fill-toggle').addEventListener('change', () => { if (activeTab === 1) render(); });
 document.getElementById('v11-fill-toggle-b').addEventListener('change', () => { if (activeTab === 2) render(); });
 document.getElementById('v11-fill-toggle-c').addEventListener('change', () => { if (activeTab === 3) render(); });
+document.getElementById('v11-fill-toggle-d').addEventListener('change', () => { if (activeTab === 4) render(); });
 
 // ── Ratio sliders ─────────────────────────────────────────────────────────────
 document.getElementById('s-ratio-slider').addEventListener('input', function() {
@@ -1191,6 +1481,47 @@ document.querySelectorAll('.preset-btn-c').forEach(btn => {
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-3'));
     }
     pendingVisibility3 = PRESET_SHOW;
+    render();
+  });
+});
+
+// ── Presets (Tab 4 — Homeostatic) ─────────────────────────────────────────────
+const PRESETS_H = {
+  'cross':   { p0: 1.0,  K0: 0.5, eLo: 0.70, eHi: 0.90, n: 2, cLo: 2,   cHi: 2,   r: 0,    mode: 'plus'  },
+  'inzone':  { p0: 1.0,  K0: 0.5, eLo: 0.80, eHi: 1.20, n: 2, cLo: 2,   cHi: 2,   r: 0,    mode: 'const' },
+  'mastery': { p0: 2.0,  K0: 0.5, eLo: 0.70, eHi: 0.90, n: 2, cLo: 2,   cHi: 2,   r: 0,    mode: 'plus'  },
+  'failure': { p0: 0.5,  K0: 0.5, eLo: 0.70, eHi: 0.90, n: 2, cLo: 2,   cHi: 2,   r: 0,    mode: 'minus' },
+  'asymm':   { p0: 1.0,  K0: 0.5, eLo: 0.70, eHi: 0.90, n: 2, cLo: 0.5, cHi: 4,   r: 0,    mode: 'plus'  },
+  'r1':      { p0: 1.0,  K0: 0.5, eLo: 0.70, eHi: 0.90, n: 2, cLo: 2,   cHi: 2,   r: 1,    mode: 'plus'  },
+  'vshape':  { p0: 1.0,  K0: 0.5, eLo: 0.70, eHi: 0.90, n: 1, cLo: 2,   cHi: 2,   r: 0,    mode: 'plus'  },
+  'basin':   { p0: 1.0,  K0: 0.5, eLo: 0.70, eHi: 0.90, n: 3, cLo: 2,   cHi: 2,   r: 0,    mode: 'plus'  },
+};
+
+document.querySelectorAll('.preset-btn-d').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const p = PRESETS_H[btn.dataset.preset];
+    document.querySelectorAll('.preset-btn-d').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    setSlider('h_p0',  p.p0,  'h_v_p0');
+    setSlider('h_K0',  p.K0,  'h_v_K0');
+    setSlider('h_eLo', p.eLo, 'h_v_eLo');
+    setSlider('h_eHi', p.eHi, 'h_v_eHi');
+    setSlider('h_n',   p.n,   'h_v_n');
+    setSlider('h_cLo', p.cLo, 'h_v_cLo');
+    setSlider('h_cHi', p.cHi, 'h_v_cHi');
+    setSlider('h_r',   p.r,   'h_v_r');
+    setSlider('h_T',   1,     'h_v_T');
+    setSlider('h_sig', 1,     'h_v_sig');
+    setSlider('h_mu',  0,     'h_v_mu');
+    pt4Mode = p.mode;
+    document.querySelectorAll('.mode-btn-d').forEach(b => b.classList.toggle('active', b.dataset.mode === p.mode));
+    document.getElementById('pt4-eq').textContent = PT_EQ_TEXT[p.mode];
+    if (activeTab !== 4) {
+      activeTab = 4;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', +b.dataset.tab === 4));
+      document.querySelectorAll('.tab-panel').forEach(pan => pan.classList.toggle('active', pan.id === 'panel-4'));
+    }
+    pendingVisibility4 = PRESET_SHOW;
     render();
   });
 });
