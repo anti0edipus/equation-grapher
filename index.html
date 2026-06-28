@@ -76,6 +76,16 @@
   }
   .reseed-btn:hover { background: #1e3a22; color: #80cc99; border-color: #3a8a55; }
 
+  /* Editable value labels */
+  [id*="_v_"][contenteditable] {
+    display: inline-block; min-width: 3ch; cursor: text;
+    border-bottom: 1px dotted #3a3a6a; outline: none;
+    padding: 0 2px; border-radius: 2px;
+    transition: background 0.1s, border-color 0.1s;
+  }
+  [id*="_v_"][contenteditable]:hover  { border-bottom-color: #6060aa; background: rgba(50,50,100,0.2); }
+  [id*="_v_"][contenteditable]:focus  { border-bottom: 1px solid #8080cc; background: rgba(50,50,100,0.35); }
+
   .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; }
   .toggle-label { font-size: 11.5px; color: #9090cc; line-height: 1.4; }
   .toggle { position: relative; width: 38px; height: 22px; flex-shrink: 0; }
@@ -141,7 +151,7 @@
       </div>
       <div class="param" style="margin-top:6px;">
         <label>p₀/k ratio <span id="s-ratio">1.00</span></label>
-        <input type="range" id="s-ratio-slider" min="0.1" max="10" step="0.05" value="1.0">
+        <input type="range" id="s-ratio-slider" min="0.1" max="10" step="0.001" value="1.0">
       </div>
       <div class="divider"></div>
       <h2>Parameters</h2>
@@ -274,7 +284,7 @@
       </div>
       <div class="param" style="margin-top:6px;">
         <label>p₀/K₀ ratio <span id="b-ratio">1.65</span></label>
-        <input type="range" id="b-ratio-slider" min="0.1" max="10" step="0.05" value="1.65">
+        <input type="range" id="b-ratio-slider" min="0.1" max="10" step="0.001" value="1.65">
       </div>
       <div class="divider"></div>
       <h2>Parameters</h2>
@@ -405,18 +415,18 @@
       <div class="divider"></div>
       <h2>Presets</h2>
       <div class="preset-grid">
-        <button class="preset-btn-c" data-preset="la">p*=0.8 r=0</button>
-        <button class="preset-btn-c" data-preset="lb">p*=p₀ r=0</button>
-        <button class="preset-btn-c" data-preset="lc">p*=3 r=0</button>
-        <button class="preset-btn-c" data-preset="ld">p*=0.8 r=1</button>
-        <button class="preset-btn-c" data-preset="le">p*=p₀ r=1</button>
-        <button class="preset-btn-c" data-preset="lf">p*=3 r=1</button>
+        <button class="preset-btn-c" data-preset="floor">Floor (k≈K₀)</button>
+        <button class="preset-btn-c" data-preset="scurve">S-curve</button>
+        <button class="preset-btn-c" data-preset="ceiling">Ceiling (k≈K_max)</button>
+        <button class="preset-btn-c" data-preset="nocrash">No crash</button>
+        <button class="preset-btn-c" data-preset="worsening">Worsening</button>
+        <button class="preset-btn-c" data-preset="r1">r=1 S-curve</button>
       </div>
-      <div class="preset-meta">K₀=0.5, K_max=2.5, β=5, p₀=1.65, T=1, σ=1, μ=0, sign=−</div>
-      <div class="preset-meta" style="margin-top:6px; color:#7070aa;">Steepness extremes (p*=p₀=1.65, r=0)</div>
+      <div class="preset-meta">K₀=0.3, K_max=2.5, β=5, σ=1, μ=0 — see each preset's T &amp; mode</div>
+      <div class="preset-meta" style="margin-top:6px; color:#7070aa;">β comparison — both use S-curve base (p₀=0.7, p*=1.2, T=2, Improving)</div>
       <div class="preset-grid" style="grid-template-columns:1fr 1fr;">
-        <button class="preset-btn-c" data-preset="bf">β=1 flat</button>
-        <button class="preset-btn-c" data-preset="bs">β=15 sharp</button>
+        <button class="preset-btn-c" data-preset="bflat">β=1 gradual</button>
+        <button class="preset-btn-c" data-preset="bsharp">β=15 step</button>
       </div>
       <div class="divider"></div>
       <h2>Parameters</h2>
@@ -600,9 +610,23 @@
           <label>ε_hi — zone upper edge <span id="h_v_eHi">0.90</span></label>
           <input type="range" id="h_eHi" min="0.05" max="3" step="0.05" value="0.90">
         </div>
+        <div style="background:#111128; border:1px solid #2a2a55; border-radius:6px; padding:8px 10px; font-size:11px; line-height:1.65; color:#9090bb; margin-bottom:6px;">
+          <div style="color:#b0b0dd; font-weight:600; margin-bottom:4px; letter-spacing:0.05em;">The comfort zone [ε_lo, ε_hi]</div>
+          <div>ε = 1/pₜ, so <span style="color:#e0e0ff;">small ε means high mastery</span> and <span style="color:#e0e0ff;">large ε means low mastery</span>. The zone is the range of challenge where k stays at its floor K₀ — no extra boredom penalty.</div>
+          <div style="margin-top:3px;"><span style="color:#e0e0ff;">ε_lo</span> is the mastery threshold: if ε drops below it (pₜ &gt; 1/ε_lo), the task has become too easy and c_lo kicks in.</div>
+          <div style="margin-top:3px;"><span style="color:#e0e0ff;">ε_hi</span> is the failure threshold: if ε rises above it (pₜ &lt; 1/ε_hi), the task is too hard and c_hi kicks in.</div>
+          <div style="margin-top:3px;">Narrowing the zone (ε_lo → ε_hi) means only a thin band of challenge feels comfortable. Widening it creates a large region where performance can wander without cost.</div>
+        </div>
         <div class="param">
           <label>n — wall curvature <span id="h_v_n">2</span></label>
           <input type="range" id="h_n" min="1" max="4" step="1" value="2">
+        </div>
+        <div style="background:#111128; border:1px solid #2a2a55; border-radius:6px; padding:8px 10px; font-size:11px; line-height:1.65; color:#9090bb; margin-bottom:6px;">
+          <div style="color:#b0b0dd; font-weight:600; margin-bottom:4px; letter-spacing:0.05em;">Wall shape as n increases</div>
+          <div><span style="color:#e0e0ff;">n=1</span> <span style="color:#606080;">—</span> V-shape: penalty is linear in distance from zone edge. Every extra unit outside costs the same; the wall rises at a constant rate.</div>
+          <div style="margin-top:3px;"><span style="color:#e0e0ff;">n=2</span> <span style="color:#606080;">—</span> Smooth bowl (quadratic). Gentle near the zone boundary, then accelerates. Analogous to a spring — small deviations barely register, large ones feel heavy.</div>
+          <div style="margin-top:3px;"><span style="color:#e0e0ff;">n=3</span> <span style="color:#606080;">—</span> Steep basin (cubic). Very flat just outside the zone — the agent barely notices crossing the edge — but punishment grows rapidly at larger deviations.</div>
+          <div style="margin-top:3px;"><span style="color:#e0e0ff;">n=4</span> <span style="color:#606080;">—</span> Quartic: nearly-flat near the boundary, near-vertical far out. Like a hard wall with a wide buffer; the agent is almost indifferent until it wanders far, then hits a cliff.</div>
         </div>
         <div class="param">
           <label>c_lo — mastery-side gain <span id="h_v_cLo">2.00</span></label>
@@ -611,6 +635,12 @@
         <div class="param">
           <label>c_hi — failure-side gain <span id="h_v_cHi">2.00</span></label>
           <input type="range" id="h_cHi" min="0" max="10" step="0.1" value="2.0">
+        </div>
+        <div style="background:#111128; border:1px solid #2a2a55; border-radius:6px; padding:8px 10px; font-size:11px; line-height:1.65; color:#9090bb; margin-bottom:6px;">
+          <div style="color:#b0b0dd; font-weight:600; margin-bottom:4px; letter-spacing:0.05em;">Asymmetric gain coefficients</div>
+          <div><span style="color:#e0e0ff;">c_lo</span> scales the penalty on the <em>mastery side</em> — when ε &lt; ε_lo, meaning pₜ is high and the task has become too easy. Higher c_lo means the agent grows bored faster from over-competence.</div>
+          <div style="margin-top:3px;"><span style="color:#e0e0ff;">c_hi</span> scales the penalty on the <em>failure side</em> — when ε &gt; ε_hi, meaning pₜ is low and the task is too hard. Higher c_hi means the agent grows bored faster from repeated failure.</div>
+          <div style="margin-top:3px;">Setting them equal gives a symmetric U-shape. Setting <span style="color:#e0e0ff;">c_lo &lt; c_hi</span> (e.g. the Asymmetric preset) models an agent who tolerates being too skilled but strongly dislikes failing. The reverse models one who fears mastery more than failure.</div>
         </div>
         <div class="param">
           <label>r — risk-free rate <span id="h_v_r">0.050</span></label>
@@ -734,6 +764,11 @@ let stochMode1 = 'det', stochMode2 = 'det', stochMode3 = 'det', stochMode4 = 'de
 let seed1 = 42, seed2 = 99, seed3 = 137, seed4 = 251;
 let plotIsStoch1 = false, plotIsStoch2 = false, plotIsStoch3 = false, plotIsStoch4 = false;
 let pendingVisibility1 = null, pendingVisibility2 = null, pendingVisibility3 = null, pendingVisibility4 = null;
+const savedDetVis = {};  // tab → visibility array, saved when leaving det mode
+
+function applyVisSet(traces, showSet) {
+  traces.forEach((t, i) => { if (i < 12 && !showSet.has(i)) t.visible = 'legendonly'; });
+}
 
 // ── Seeded PRNG (mulberry32) + Box-Muller ─────────────────────────────────────
 function mulberry32(seed) {
@@ -943,73 +978,101 @@ function computeStochastic(tab, params, M, seed) {
   const sqrtDt = Math.sqrt(T * 0.99 / (N - 1));
   const g = ptSign * (sig * sig / 2 - mu);
 
-  function v11at(pti, tau) {
-    if (tau <= 1e-10 || !isFinite(pti) || pti <= 0) return NaN;
+  function fullAt(pti, tau) {
+    if (tau <= 1e-10 || !isFinite(pti) || pti <= 0) return { v: NaN, pp: NaN, bp: NaN };
     const ke = keFunc(pti);
-    if (!isFinite(ke) || ke <= 1e-10) return NaN;
+    if (!isFinite(ke) || ke <= 1e-10) return { v: NaN, pp: NaN, bp: NaN };
     const d2 = (Math.log(ke / pti) + (sig * sig / 2 - r) * tau) / (sig * Math.sqrt(tau));
     const Nd2 = normalCDF(d2), Nd1 = 1 - Nd2;
-    return pti * Nd1 - ke * Math.exp(-r * tau) * Nd2;
+    const discount = Math.exp(-r * tau);
+    return {
+      v:  pti * Nd1 - ke * discount * Nd2,
+      pp: pti * Nd1,
+      bp: ke * discount * Nd2,
+    };
   }
 
   const rand = mulberry32(seed);
   const zs = genNormals(M * (N - 1), rand);
 
-  const paths = [];
+  // Store pₜ paths (the primitive); accumulate derived sums without storing full matrices
+  const ptPaths = [];
+  const v_sum  = new Array(N).fill(0), v_cnt  = new Array(N).fill(0);
+  const pp_sum = new Array(N).fill(0), pp_cnt = new Array(N).fill(0);
+  const bp_sum = new Array(N).fill(0), bp_cnt = new Array(N).fill(0);
+
   for (let m = 0; m < M; m++) {
     const path = new Array(N);
     let W = 0;
-    path[0] = v11at(p0, T - ts[0]);
+    path[0] = p0;
+    let res = fullAt(p0, T - ts[0]);
+    if (isFinite(res.v))  { v_sum[0]  += res.v;  v_cnt[0]++;  }
+    if (isFinite(res.pp)) { pp_sum[0] += res.pp; pp_cnt[0]++; }
+    if (isFinite(res.bp)) { bp_sum[0] += res.bp; bp_cnt[0]++; }
     for (let i = 1; i < N; i++) {
       W += sqrtDt * zs[m * (N - 1) + (i - 1)];
-      path[i] = v11at(p0 * Math.exp(g * ts[i] - sig * W), T - ts[i]);
+      const pti = p0 * Math.exp(g * ts[i] - sig * W);
+      path[i] = pti;
+      res = fullAt(pti, T - ts[i]);
+      if (isFinite(res.v))  { v_sum[i]  += res.v;  v_cnt[i]++;  }
+      if (isFinite(res.pp)) { pp_sum[i] += res.pp; pp_cnt[i]++; }
+      if (isFinite(res.bp)) { bp_sum[i] += res.bp; bp_cnt[i]++; }
     }
-    paths.push(path);
+    ptPaths.push(path);
   }
 
-  const emp_mean = ts.map((_, i) => {
-    let sum = 0, cnt = 0;
-    for (const path of paths) { if (isFinite(path[i])) { sum += path[i]; cnt++; } }
-    return cnt > 0 ? sum / cnt : NaN;
+  const emp_mean_pt = ts.map((_, i) => {
+    let s = 0, c = 0;
+    for (const path of ptPaths) { if (isFinite(path[i])) { s += path[i]; c++; } }
+    return c > 0 ? s / c : NaN;
   });
+  const emp_mean_v  = v_sum.map( (s, i) => v_cnt[i]  > 0 ? s / v_cnt[i]  : NaN);
+  const emp_mean_pp = pp_sum.map((s, i) => pp_cnt[i] > 0 ? s / pp_cnt[i] : NaN);
+  const emp_mean_bp = bp_sum.map((s, i) => bp_cnt[i] > 0 ? s / bp_cnt[i] : NaN);
 
   const p10 = [], p90 = [];
   for (let i = 0; i < N; i++) {
-    const vals = paths.map(p => p[i]).filter(isFinite).sort((a, b) => a - b);
+    const vals = ptPaths.map(p => p[i]).filter(isFinite).sort((a, b) => a - b);
     p10.push(vals.length > 0 ? vals[Math.floor(vals.length * 0.1)] : NaN);
     p90.push(vals.length > 0 ? vals[Math.floor(vals.length * 0.9)] : NaN);
   }
 
-  const median_v11 = ts.map((t, i) => v11at(p0 * Math.exp(g * t), T - t));
-  const arith_g = g + sig * sig / 2;
-  const arith_v11 = ts.map((t, i) => v11at(p0 * Math.exp(arith_g * t), T - t));
+  const arith_g  = g + sig * sig / 2;
+  const median_pt = ts.map(t => p0 * Math.exp(g * t));
+  const arith_pt  = ts.map(t => p0 * Math.exp(arith_g * t));
 
-  return { ts, paths, emp_mean, p10, p90, median_v11, arith_v11 };
+  return { ts, ptPaths, emp_mean_pt, emp_mean_v, emp_mean_pp, emp_mean_bp, p10, p90, median_pt, arith_pt };
 }
 
 function buildStochasticTraces(tab) {
   const M = 50;
   const params = tab === 1 ? getParams1() : tab === 2 ? getParams2() : tab === 3 ? getParams3() : getParams4();
   const seed = tab === 1 ? seed1 : tab === 2 ? seed2 : tab === 3 ? seed3 : seed4;
-  const { ts, paths, emp_mean, p10, p90, median_v11, arith_v11 } =
+  const { ts, ptPaths, emp_mean_pt, emp_mean_v, emp_mean_pp, emp_mean_bp,
+          p10, p90, median_pt, arith_pt } =
     computeStochastic(tab, params, M, seed);
 
   const bx = [], by = [];
-  paths.forEach(path => { bx.push(...ts, null); by.push(...path, null); });
+  ptPaths.forEach(path => { bx.push(...ts, null); by.push(...path, null); });
 
   const ptLabel = params.ptSign > 0 ? 'Improving' : params.ptSign < 0 ? 'Worsening' : 'Constant';
 
   return [
+    // ── pₜ distribution (the primitive) ───────────────────────────────────────
     { x: ts, y: p10, type: 'scatter', mode: 'lines', showlegend: false, hoverinfo: 'skip',
-      line: { color: 'rgba(204,68,255,0)', width: 0 } },
-    { x: ts, y: p90, name: '10–90th pctile band', type: 'scatter', mode: 'lines',
-      fill: 'tonexty', fillcolor: 'rgba(204,68,255,0.12)',
-      line: { color: 'rgba(204,68,255,0)', width: 0 }, hoverinfo: 'skip' },
-    { x: bx, y: by, name: `v Eq.11 paths (M=${M})`, type: 'scatter', mode: 'lines',
-      line: { color: 'rgba(204,68,255,0.2)', width: 0.8 }, hoverinfo: 'skip' },
-    line(ts, median_v11, `v Eq.11 — median pₜ (${ptLabel})`, '#cc44ff'),
-    line(ts, arith_v11,  'v Eq.11 — mean pₜ',               '#3399ff', 'dash'),
-    line(ts, emp_mean,   'v Eq.11 — empirical mean',          '#ff6699'),
+      line: { color: 'rgba(0,204,68,0)', width: 0 } },
+    { x: ts, y: p90, name: 'pₜ 10–90th pctile band', type: 'scatter', mode: 'lines',
+      fill: 'tonexty', fillcolor: 'rgba(0,204,68,0.1)',
+      line: { color: 'rgba(0,204,68,0)', width: 0 }, hoverinfo: 'skip' },
+    { x: bx, y: by, name: `pₜ paths (M=${M})`, type: 'scatter', mode: 'lines',
+      line: { color: 'rgba(0,204,68,0.18)', width: 0.8 }, hoverinfo: 'skip' },
+    line(ts, median_pt,  `pₜ — median path (${ptLabel})`, '#00cc44'),
+    line(ts, arith_pt,   'pₜ — arithmetic mean',          '#3399ff', 'dash'),
+    line(ts, emp_mean_pt,'pₜ — empirical mean',            '#66ffaa'),
+    // ── derived means (dotted) ─────────────────────────────────────────────────
+    line(ts, emp_mean_v,  'E[v]',               '#cc44ff', 'dot'),
+    line(ts, emp_mean_pp, 'E[p_plot = pₜ·N(d₁)]',    '#00ffaa', 'dot'),
+    line(ts, emp_mean_bp, 'E[b_plot = k·e⁻ʳᵗ·N(d₂)]','#ff6644', 'dot'),
   ];
 }
 
@@ -1109,18 +1172,20 @@ function render() {
   const prevIsStoch  = activeTab === 1 ? plotIsStoch1 : activeTab === 2 ? plotIsStoch2 : activeTab === 3 ? plotIsStoch3 : plotIsStoch4;
   const pendingVis   = activeTab === 1 ? pendingVisibility1 : activeTab === 2 ? pendingVisibility2 : activeTab === 3 ? pendingVisibility3 : pendingVisibility4;
 
+  LAYOUT.shapes = [];
+
   if (activeTab === 1) {
     const p = getParams1();
     const ratio = p.p0 / p.k, rs = ratio.toFixed(3);
     document.getElementById('s-ratio').textContent = rs;
     document.getElementById('s-ratio-slider').value = Math.min(10, Math.max(0.1, ratio));
-    LAYOUT.annotations = [{ text: `p₀/k = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 13, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
+    LAYOUT.annotations = [{ text: `p₀/k = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 12, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
   } else if (activeTab === 2) {
     const p = getParams2();
     const ratio = p.p0 / p.K0, rs = ratio.toFixed(3);
     document.getElementById('b-ratio').textContent = rs;
     document.getElementById('b-ratio-slider').value = Math.min(10, Math.max(0.1, ratio));
-    LAYOUT.annotations = [{ text: `p₀/K₀ = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 13, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
+    LAYOUT.annotations = [{ text: `p₀/K₀ = ${rs}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 12, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
   } else if (activeTab === 3) {
     const p = getParams3();
     const ratio = p.p0 / p.Kmax, rs = ratio.toFixed(3);
@@ -1134,13 +1199,73 @@ function render() {
     LAYOUT.annotations = [{ text: `ε(0)=${eps0.toFixed(3)}  zone[${p.eLo.toFixed(2)},${p.eHi.toFixed(2)}]  ${status}  k(ε₀)=${ke0.toFixed(3)}`, x: 0.99, y: 0.99, xref: 'paper', yref: 'paper', xanchor: 'right', yanchor: 'top', showarrow: false, font: { size: 11, color: '#d0d0ff' }, bgcolor: 'rgba(10,10,30,0.85)', bordercolor: '#3a3a6a', borderwidth: 1, borderpad: 6 }];
   }
 
+  // ── Zero crossings + terminal value (deterministic mode, all tabs) ─────────────
+  if (!isStochastic) {
+    const v11tr = traces[10];
+    if (v11tr && Array.isArray(v11tr.y)) {
+      const vArr = v11tr.y, tArr = v11tr.x;
+
+      // Find zero crossings by linear interpolation between sign flips
+      const crossings = [];
+      for (let i = 1; i < vArr.length; i++) {
+        const va = vArr[i - 1], vb = vArr[i];
+        if (isFinite(va) && isFinite(vb) && va * vb < 0)
+          crossings.push(tArr[i - 1] + (-va) * (tArr[i] - tArr[i - 1]) / (vb - va));
+      }
+
+      // Vertical dotted line at each crossing
+      crossings.forEach(tc => {
+        LAYOUT.shapes.push({
+          type: 'line', x0: tc, x1: tc, y0: 0, y1: 1, yref: 'paper',
+          line: { color: 'rgba(255,255,120,0.6)', width: 1.5, dash: 'dot' }
+        });
+      });
+
+      // Terminal value: analytical limit as τ→0
+      const p = activeTab === 1 ? getParams1() : activeTab === 2 ? getParams2()
+              : activeTab === 3 ? getParams3() : getParams4();
+      const pT = p.p0 * Math.exp(p.ptSign * (p.sig * p.sig / 2 - p.mu) * p.T);
+      const keT = makeKeFunc(activeTab, p)(pT);
+      const termVal = pT > keT ? pT : -keT;
+
+      // v(0) and direction at the start of the trace
+      let v0 = NaN, dir = '—';
+      for (let i = 0; i + 1 < vArr.length; i++) {
+        if (isFinite(vArr[i]) && isFinite(vArr[i + 1])) {
+          v0 = vArr[i];
+          const slope = vArr[i + 1] - vArr[i];
+          dir = slope > 1e-10 ? '↑ rising' : slope < -1e-10 ? '↓ falling' : '→ flat';
+          break;
+        }
+      }
+
+      // Append to existing annotation box
+      const crossText = crossings.length === 0
+        ? 'no crossing in [0,T]'
+        : crossings.map(tc => 't=' + tc.toFixed(2)).join(', ');
+      LAYOUT.annotations[0].text +=
+        `<br>v(0) = ${isFinite(v0) ? v0.toFixed(3) : '—'}  ·  v(T) = ${termVal.toFixed(3)}`
+        + `<br>${dir}  ·  v=0: ${crossText}`;
+    }
+  }
+
   if (!initialized) {
+    if (!isStochastic) applyVisSet(traces, PRESET_SHOW);
     Plotly.newPlot('plot', traces, LAYOUT, CONFIG);
     initialized = true;
   } else {
     const sameStructure = (plotActiveTab === activeTab) && (isStochastic === prevIsStoch);
+
+    // Save det visibility before leaving a tab or switching to stochastic
+    if (!prevIsStoch && plotEl.data) {
+      const saveKey = (plotActiveTab !== activeTab) ? plotActiveTab : (isStochastic ? activeTab : null);
+      if (saveKey !== null) {
+        savedDetVis[saveKey] = plotEl.data.slice(0, 12).map(t => t.visible === 'legendonly' ? 'legendonly' : true);
+      }
+    }
+
     if (!isStochastic && pendingVis !== null) {
-      traces.forEach((t, i) => { if (i < 12 && !pendingVis.has(i)) t.visible = 'legendonly'; });
+      applyVisSet(traces, pendingVis);
       if (activeTab === 1) pendingVisibility1 = null;
       else if (activeTab === 2) pendingVisibility2 = null;
       else if (activeTab === 3) pendingVisibility3 = null;
@@ -1153,7 +1278,14 @@ function render() {
           traces[i].y = existing.y;
         }
       });
+    } else if (!isStochastic && !sameStructure) {
+      if (savedDetVis[activeTab]) {
+        savedDetVis[activeTab].forEach((vis, i) => { if (i < traces.length) traces[i].visible = vis; });
+      } else {
+        applyVisSet(traces, PRESET_SHOW);
+      }
     }
+
     Plotly.react('plot', traces, LAYOUT, CONFIG);
   }
 
@@ -1361,7 +1493,7 @@ document.getElementById('v11-fill-toggle-d').addEventListener('change', () => { 
 // ── Ratio sliders ─────────────────────────────────────────────────────────────
 document.getElementById('s-ratio-slider').addEventListener('input', function() {
   const ratio = parseFloat(this.value), k = 1.65 / ratio;
-  document.getElementById('s-ratio').textContent = ratio.toFixed(2);
+  document.getElementById('s-ratio').textContent = ratio.toFixed(3);
   const kEl = document.getElementById('s_k');
   kEl.value = Math.min(Math.max(k, parseFloat(kEl.min)), parseFloat(kEl.max));
   document.getElementById('s_v_k').textContent = parseFloat(kEl.value).toFixed(2);
@@ -1370,7 +1502,7 @@ document.getElementById('s-ratio-slider').addEventListener('input', function() {
 
 document.getElementById('b-ratio-slider').addEventListener('input', function() {
   const ratio = parseFloat(this.value), K0 = 1.65 / ratio;
-  document.getElementById('b-ratio').textContent = ratio.toFixed(2);
+  document.getElementById('b-ratio').textContent = ratio.toFixed(3);
   const K0El = document.getElementById('b_K0');
   K0El.value = Math.min(Math.max(K0, parseFloat(K0El.min)), parseFloat(K0El.max));
   document.getElementById('b_v_K0').textContent = parseFloat(K0El.value).toFixed(2);
@@ -1449,14 +1581,22 @@ document.querySelectorAll('.preset-btn-b').forEach(btn => {
 
 // ── Presets (Tab 3 — Boredom logistic) ───────────────────────────────────────
 const PRESETS_L = {
-  'la': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 0.8,  r: 0 },
-  'lb': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 1.65, r: 0 },
-  'lc': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 3.0,  r: 0 },
-  'ld': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 0.8,  r: 1 },
-  'le': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 1.65, r: 1 },
-  'lf': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 5, pstar: 3.0,  r: 1 },
-  'bf': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 1,  pstar: 1.65, r: 0 },
-  'bs': { p0: 1.65, K0: 0.5, Kmax: 2.5, beta: 15, pstar: 1.65, r: 0 },
+  // p₀ stays below p* throughout → k≈K₀ (collapses to simple constant-k model)
+  'floor':    { p0: 1.0,  K0: 0.3, Kmax: 2.5, beta: 5,  pstar: 3.0, r: 0, T: 1, mode: 'plus' },
+  // pₜ crosses p* at t≈1.1 — full S-curve visible; canonical logistic view
+  'scurve':   { p0: 0.7,  K0: 0.3, Kmax: 2.5, beta: 5,  pstar: 1.2, r: 0, T: 2, mode: 'plus' },
+  // p₀ already above p* → k≈K_max throughout; boredom saturated from the start
+  'ceiling':  { p0: 1.0,  K0: 0.3, Kmax: 2.5, beta: 5,  pstar: 0.3, r: 0, T: 1, mode: 'plus' },
+  // pₜ(T=3)≈4.5 >> K_max=1.3 → k/pₜ→0 → N(d₂)→0 → v→pₜ; the no-crash guarantee
+  'nocrash':  { p0: 1.0,  K0: 0.3, Kmax: 1.3, beta: 5,  pstar: 1.0, r: 0, T: 3, mode: 'plus' },
+  // pₜ falls; k falls toward K₀ but k/pₜ rises → crash still possible in logistic
+  'worsening':{ p0: 1.65, K0: 0.3, Kmax: 2.5, beta: 5,  pstar: 0.8, r: 0, T: 1, mode: 'minus' },
+  // S-curve cross with r=1 discounting
+  'r1':       { p0: 0.7,  K0: 0.3, Kmax: 2.5, beta: 5,  pstar: 1.2, r: 1, T: 2, mode: 'plus' },
+  // gradual: β=1 — boredom rises slowly, S-curve stretched wide
+  'bflat':    { p0: 0.7,  K0: 0.3, Kmax: 2.5, beta: 1,  pstar: 1.2, r: 0, T: 2, mode: 'plus' },
+  // abrupt: β=15 — near step-function at p*; boredom jumps almost instantly
+  'bsharp':   { p0: 0.7,  K0: 0.3, Kmax: 2.5, beta: 15, pstar: 1.2, r: 0, T: 2, mode: 'plus' },
 };
 
 document.querySelectorAll('.preset-btn-c').forEach(btn => {
@@ -1470,12 +1610,12 @@ document.querySelectorAll('.preset-btn-c').forEach(btn => {
     setSlider('l_pstar', p.pstar, 'l_v_pstar');
     setSlider('l_beta',  p.beta,  'l_v_beta');
     setSlider('l_r',     p.r,     'l_v_r');
-    setSlider('l_T',     1,       'l_v_T');
-    setSlider('l_sig',   1,       'l_v_sig');
-    setSlider('l_mu',    0,       'l_v_mu');
-    pt3Mode = 'minus';
-    document.querySelectorAll('.mode-btn-c').forEach(b => b.classList.toggle('active', b.dataset.mode === 'minus'));
-    document.getElementById('pt3-eq').textContent = PT_EQ_TEXT['minus'];
+    setSlider('l_T',     p.T ?? 1, 'l_v_T');
+    setSlider('l_sig',   1,        'l_v_sig');
+    setSlider('l_mu',    0,        'l_v_mu');
+    pt3Mode = p.mode ?? 'minus';
+    document.querySelectorAll('.mode-btn-c').forEach(b => b.classList.toggle('active', b.dataset.mode === pt3Mode));
+    document.getElementById('pt3-eq').textContent = PT_EQ_TEXT[pt3Mode];
     if (activeTab !== 3) {
       activeTab = 3;
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', +b.dataset.tab === 3));
@@ -1529,6 +1669,65 @@ document.querySelectorAll('.preset-btn-d').forEach(btn => {
 
 render();
 new ResizeObserver(() => Plotly.Plots.resize('plot')).observe(document.getElementById('main'));
+
+// ── Editable value labels ──────────────────────────────────────────────────────
+document.querySelectorAll('[id*="_v_"]').forEach(span => {
+  const sliderId = span.id.replace(/_v_/, '_');
+  const slider = document.getElementById(sliderId);
+  if (!slider || slider.type !== 'range') return;
+
+  span.contentEditable = 'true';
+  span.spellcheck = false;
+
+  const decimalsFor = s => s < 0.01 ? 3 : s < 1 ? 2 : 0;
+
+  const restoreLabel = () => {
+    const s = parseFloat(slider.step);
+    span.textContent = parseFloat(slider.value).toFixed(decimalsFor(s));
+  };
+
+  const commit = () => {
+    const raw = span.textContent.trim();
+    const v = parseFloat(raw);
+    if (isNaN(v)) { restoreLabel(); return; }
+
+    const lo = parseFloat(slider.min), hi = parseFloat(slider.max);
+    const clamped = Math.min(hi, Math.max(lo, v));
+
+    // Precision: use typed decimal count (up to 4) or step-based minimum
+    const origStep = slider.step;
+    const stepDec  = decimalsFor(parseFloat(origStep));
+    const dotIdx   = raw.indexOf('.');
+    const typedDec = dotIdx >= 0 ? Math.min(raw.length - dotIdx - 1, 4) : 0;
+    const dec      = Math.max(stepDec, typedDec);
+
+    // Set precise value by lifting step constraint momentarily
+    slider.step  = 'any';
+    slider.value = clamped;
+    slider.step  = origStep;
+
+    // Fire existing handlers (ratio updates, ε cross-clamp, etc.)
+    slider.dispatchEvent(new Event('input'));
+
+    // Override the label the handler just wrote with our typed precision
+    span.textContent = clamped.toFixed(dec);
+  };
+
+  span.addEventListener('blur', commit);
+  span.addEventListener('keydown', e => {
+    if (e.key === 'Enter')  { e.preventDefault(); span.blur(); }
+    if (e.key === 'Escape') { restoreLabel(); span.blur(); }
+  });
+  // Select all on focus so typing immediately replaces the value
+  span.addEventListener('focus', () => {
+    const sel = window.getSelection(), r = document.createRange();
+    r.selectNodeContents(span);
+    sel.removeAllRanges();
+    sel.addRange(r);
+  });
+  // Prevent clicks inside the label from toggling the slider accidentally
+  span.addEventListener('mousedown', e => e.stopPropagation());
+});
 </script>
 </body>
 </html>
